@@ -13,7 +13,9 @@
     <link rel="stylesheet" href="{{ asset('componen/tailwind-classes.css') }}" />
     <link rel="stylesheet" href="{{ asset('componen/colorplate.css') }}" />
     <link rel="stylesheet" href="{{ asset('fontawesome-free-6.5.2-web/css/all.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    {{--
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Bootstrap CSS -->
 
@@ -77,17 +79,18 @@
     </style>
 
     @yield('css')
+
+
+    @livewireStyles
 </head>
 
 <body>
 
 
 
-    <div id="modal"
-        class="d-none align-items-center justify-content-start position-fixed top-0 left-0 w-full h-full"
+    <div id="modal" class="top-0 left-0 w-full h-full d-none align-items-center justify-content-start position-fixed"
         style="overflow-x: auto; padding: 0 10%;z-index: 999; background-color: rgba(0,0,0,.2)">
-        <img class="position-fixed cursor-pointer" onclick="closeModal()"
-            src="" width="50"
+        <img class="cursor-pointer position-fixed" onclick="closeModal()" src="" width="50"
             style="top: 20px; right: 20px;filter: drop-shadow(0px 0px 10px black) max-height: 500px;" />
     </div>
 
@@ -103,7 +106,7 @@
             <!-- ================================================ -->
             @include('admin.template.navbar')
             <!--  Header End -->
-            <div class="container-fluid mx-3 my-3" style="width: -webkit-fill-available; max-width: none; flex:1;">
+            <div class="mx-3 my-3 container-fluid" style="width: -webkit-fill-available; max-width: none; flex:1;">
                 <!--  Row 1 -->
                 @yield('main')
 
@@ -171,12 +174,12 @@
                 div.classList.add("image-container-in-modal", "shadow");
                 div.style.width = "fit-content";
                 div.innerHTML = `
-                    <div class="gradient-top rounded w-100 h-100" style="max-height: 500px; height: 500px; width: fit-content"></div>
-                    <div class="p-3 rounded text-white position-absolute w-100 h-100 d-flex flex-column justify-content-end" style="left: 0; bottom: 0;" >
+                    <div class="rounded gradient-top w-100 h-100" style="max-height: 500px; height: 500px; width: fit-content"></div>
+                    <div class="p-3 text-white rounded position-absolute w-100 h-100 d-flex flex-column justify-content-end" style="left: 0; bottom: 0;" >
                         <header class="text-xl font-semibold">${image.nama}</header>
                         <div class="text-lg">${image.detail}</div>
                     </div>
-                    <img id="modal-img" style="max-height: 500px; height: 500px;" class="rounded  " src='{{ url('') }}/${image.src}' />
+                    <img id="modal-img" style="max-height: 500px; height: 500px;" class="rounded " src='{{ url('') }}/${image.src}' />
                 `;
                 modal.appendChild(div);
 
@@ -185,6 +188,7 @@
             // modalImg.src = src[0];
         }
     </script>
+    @livewireScripts
 </body>
 
 </html>

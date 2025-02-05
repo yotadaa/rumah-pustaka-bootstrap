@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'pangkat'
     ];
 
     /**
@@ -45,4 +46,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function access()
+    {
+        return $this->hasMany(UserAccess::class, 'user_id', 'id');
+    }
+
+
 }
