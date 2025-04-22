@@ -14,9 +14,13 @@ class AdminController extends Controller
         return view('admin.dashboard');
     }
 
+    public function akreditasi() {
+        return view('admin.iso.berkas',['type' => 'akreditasi']);
+    }
+
     public function iso()
     {
-        return view('admin.iso.berkas');
+        return view('admin.iso.berkas', ['type'=> 'iso']);
     }
 
     public function login()

@@ -50,6 +50,7 @@ class Komponen extends Component
     public $berkas;
     public $roles;
     public $detail;
+    public $type;
 
     //delete
     public $confirmingDelete;
@@ -58,10 +59,11 @@ class Komponen extends Component
     // view
     public $display = 1;
 
-    public function mount($id, $role_id)
+    public function mount($id, $role_id, $type)
     {
         $this->id = $id;
         $this->role_id = $role_id;
+        $this->type = $type;
     }
 
     public function changeDisplay()
@@ -183,12 +185,18 @@ class Komponen extends Component
 
     public function submit()
     {
-        $this->validate([
-            'formName' => 'required|string|max:255',
-            // 'formRole' => 'required|integer',
-            'selectedRoles' => 'required|array',
-            'selectedRoles.*' => 'required|integer',
-        ]);
+        if ($this->type == 'iso') {
+            $this->validate([
+                'formName' => 'required|string|max:255',
+                // 'formRole' => 'required|integer',
+                'selectedRoles' => 'required|array',
+                'selectedRoles.*' => 'required|integer',
+            ]);
+        } else {
+            $this->validate([
+                'formName' => 'required|string|max:255',
+            ]);
+        }
 
         if ($this->komponenId != null) {
             // dd($this->selectedRoles);
@@ -229,7 +237,7 @@ class Komponen extends Component
             $data = [
                 'id' => Str::uuid(),
                 'name' => $this->formName,
-                'model' => 'iso',
+                'model' => $this->type,
             ];
             Matriks::create($data);
             foreach ($this->selectedRoles as $role) {
@@ -247,30 +255,37 @@ class Komponen extends Component
 
     public function render()
     {
-        $this->userAccess = UserAccess::where('user_id', Auth::user()->id)->get();
-        $this->berkas = Berkas::findOrFail($this->id);
-        $this->komponen = Matriks::with(['access'])
-            ->get()
-            ->sortBy(function ($item) {
-                // Extract the main section number and sub-section numbers
-                preg_match('/^(\d+)(?:\.(\d+(?:\.\d+)*))?/', $item->name, $matches);
 
-                $mainSection = (int) ($matches[1] ?? 0); // Main section number (e.g., 4, 5, 6)
-                $subSection = $matches[2] ?? '0'; // Sub-section number (e.g., 1, 2, 1.1, 1.2)
+        if ($this->type == "iso") {
+            $this->userAccess = UserAccess::where('user_id', Auth::user()->id)->get();
+            $this->berkas = Berkas::findOrFail($this->id);
+            $this->komponen = Matriks::with(['access'])
+                ->get()
+                ->sortBy(function ($item) {
+                    // Extract the main section number and sub-section numbers
+                    preg_match('/^(\d+)(?:\.(\d+(?:\.\d+)*))?/', $item->name, $matches);
 
-                // Convert the sub-section into a sortable format (e.g., "1.2" => "0001.0002")
-                $subSectionParts = explode('.', $subSection);
-                $subSectionFormatted = implode(
-                    '.',
-                    array_map(function ($part) {
-                        return str_pad($part, 4, '0', STR_PAD_LEFT); // Pad each part with leading zeros
-                    }, $subSectionParts),
-                );
+                    $mainSection = (int) ($matches[1] ?? 0); // Main section number (e.g., 4, 5, 6)
+                    $subSection = $matches[2] ?? '0'; // Sub-section number (e.g., 1, 2, 1.1, 1.2)
+    
+                    // Convert the sub-section into a sortable format (e.g., "1.2" => "0001.0002")
+                    $subSectionParts = explode('.', $subSection);
+                    $subSectionFormatted = implode(
+                        '.',
+                        array_map(function ($part) {
+                            return str_pad($part, 4, '0', STR_PAD_LEFT); // Pad each part with leading zeros
+                        }, $subSectionParts),
+                    );
 
-                // Combine main section and sub-section for sorting
-                return sprintf('%04d.%s', $mainSection, $subSectionFormatted);
-            });
-        $this->roles = Role::where('id', $this->role_id)->get();
+                    // Combine main section and sub-section for sorting
+                    return sprintf('%04d.%s', $mainSection, $subSectionFormatted);
+                });
+
+            $this->roles = Role::where('id', $this->role_id)->get();
+        } else {
+            $this->komponen = Matriks::where('model', $this->type)->get();
+        }
+
         return view('livewire.iso.komponen');
     }
 

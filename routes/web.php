@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Admin\AkreditasiController;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
@@ -24,6 +25,11 @@ Route::get('/register', [AdminController::class, 'register'])->name('register')-
 Route::group(["prefix" => "admin", "middleware" => "auth"], function() {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+    Route::group(['prefix' => 'akreditasi'], function() {
+        Route::get('', [AdminController::class, 'akreditasi'])->name('admin.akreditasi.daftar');
+        Route::get('/komponen/{id}/{role_id}', [AkreditasiController::class, 'komponen'])->name('admin.akreditasi.komponen');
+        
+    });
 
     Route::group(['prefix' => 'iso'], function() {
         Route::get('', [AdminController::class, 'iso'])->name('admin.iso.daftar');

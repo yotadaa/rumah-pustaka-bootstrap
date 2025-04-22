@@ -13,7 +13,8 @@ class IsoController extends Controller
     }
 
     public function komponen($id, $role_id) {
-        return view('admin.iso.komponen', compact('id', 'role_id'));
+        $type = 'iso';
+        return view('admin.iso.komponen', compact('id', 'role_id', 'type'));
     }
 
     public function kelolaKomponen($berkasId, $komponenId, $role_id) {

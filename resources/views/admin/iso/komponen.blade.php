@@ -66,7 +66,7 @@
 @endsection
 
 @section('main')
-@livewire('iso.komponen', ['id' => $id, 'role_id' => $role_id])
+@livewire('iso.komponen', ['id' => $id, 'role_id' => $role_id, 'type' => $type])
 @endsection
 
 @section('js')

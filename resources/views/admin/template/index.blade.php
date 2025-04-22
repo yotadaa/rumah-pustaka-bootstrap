@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="{{ asset('componen/tailwind-classes.css') }}" />
     <link rel="stylesheet" href="{{ asset('componen/colorplate.css') }}" />
     <link rel="stylesheet" href="{{ asset('fontawesome-free-6.5.2-web/css/all.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/color.css/color.css" />
+    <link rel="stylesheet" href="{{ asset('assets/color.css') }}" />
+
     {{--
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -82,9 +85,10 @@
 
 
     @livewireStyles
+    @vite('resources/js/app.js')
 </head>
 
-<body>
+<body >
 
 
 
@@ -106,7 +110,7 @@
             <!-- ================================================ -->
             @include('admin.template.navbar')
             <!--  Header End -->
-            <div class="mx-3 my-3 container-fluid" style="width: -webkit-fill-available; max-width: none; flex:1;">
+            <div class="mx-0 my-3 container-fluid" style="width: -webkit-fill-available; max-width: none; flex:1;">
                 <!--  Row 1 -->
                 @yield('main')
 

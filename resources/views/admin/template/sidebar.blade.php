@@ -19,10 +19,10 @@
                 [
                     'title' => 'Berkas',
                     'icon' => 'fa fa-file-alt',
-                    'rute' => '#',
+                    'rute' => route('admin.akreditasi.daftar'),
                     'type' => 'single',
                     'iconType' => 'fa',
-                    'routeList' => '',
+                    'routeList' => 'admin/akreditasi',
                 ],
             ],
         ],

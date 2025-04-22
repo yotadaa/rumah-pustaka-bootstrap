@@ -3,7 +3,7 @@
         <div class="mb-0 d-flex justify-content-between align-items-center">
             <label class="gap-2 mb-2 text-2xl font-bold gk-text-base-black d-flex align-items-center">
                 <img src="{{ asset('heroicons/Icon/Outline/document-texthero.svg') }}" class="me-2" />
-                Daftar Berkas {{ $confirmingDeleteText }}
+                {{ $type == 'akreditasi' ? 'Daftar Berkas Penilaian' : 'Daftar Berkas' }}
             </label>
             @if (auth()->user()->pangkat == 0)
                 <button class="gap-1 btn btn-primary d-flex align-items-center" wire:click="toggleFormBerkas">
@@ -72,18 +72,21 @@
                                 @endif
 
                                 <!-- Details Button -->
-                                <a href="{{ route('admin.iso.divisi', ['id' => $item->id]) }}"
+                                <a @if ($type == 'iso') href="{{ route('admin.iso.divisi', ['id' => $item->id]) }}" @else href="{{ route('admin.akreditasi.komponen', ['id' => -1,'role_id' => -1]) }}" @endif
                                     style="padding: 10px 10px;"
                                     class="gap-2 fs-3 btn btn-sm btn-warning d-flex align-items-center">
                                     <i class="fas fa-info-circle"></i>
                                 </a>
 
-                                <button type="button" style="padding: 10px 10px;"
-                                    class="gap-2 fs-3 btn btn-sm btn-dark d-flex align-items-center"
-                                    wire:click="downloadZip(null, '{{ $item->id }}')" wire:loading.attr="disabled">
-                                    <i class="fas fa-download" wire:loading.remove wire:target="downloadZip"></i>
-                                    <i class="fas fa-spinner fa-spin" wire:loading wire:target="downloadZip"></i>
-                                </button>
+                                @if ($type == 'iso')
+                                    <button type="button" style="padding: 10px 10px;"
+                                        class="gap-2 fs-3 btn btn-sm btn-dark d-flex align-items-center"
+                                        wire:click="downloadZip(null, '{{ $item->id }}')"
+                                        wire:loading.attr="disabled">
+                                        <i class="fas fa-download" wire:loading.remove wire:target="downloadZip"></i>
+                                        <i class="fas fa-spinner fa-spin" wire:loading wire:target="downloadZip"></i>
+                                    </button>
+                                @endif
 
 
                                 <!-- Delete Button -->
@@ -120,7 +123,7 @@
                             "<strong>{{ $confirmingDelete != null
                                 ? $confirmingDelete->name
                                 : "Nama
-                                                                                                                Berkas" }}</strong>"
+                                                                                                                                                                                                    Berkas" }}</strong>"
                             untuk
                             mengonfirmasi penghapusan:</p>
                         <input type="text" class="form-control" wire:model="confirmingDeleteText">

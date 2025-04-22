@@ -22,10 +22,16 @@ class Berkas extends Component
     public $berkasId = null;
     public $confirmingDelete = null;
     public $confirmingDeleteText;
+    public $type;
+
+    public function mount($type)
+    {
+        $this->type = $type;
+    }
 
     public function render()
     {
-        $this->berkas = BerkasModel::all();
+        $this->berkas = BerkasModel::where('model', $this->type)->get();
         return view('livewire.iso.berkas');
     }
 
@@ -52,7 +58,7 @@ class Berkas extends Component
             $berkas->update(['name' => $this->name]);
             session()->flash('message', 'Berkas berhasil diperbarui.');
         } else {
-            BerkasModel::create(['id' => Str::uuid(), 'name' => $this->name, 'model' => 'iso']);
+            BerkasModel::create(['id' => Str::uuid(), 'name' => $this->name, 'model' => $this->type]);
             session()->flash('message', 'Berkas berhasil ditambahkan.');
         }
 

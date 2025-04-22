@@ -6,15 +6,20 @@
 
     <div class="card-body">
         <div class="mb-0 d-flex justify-content-between align-items-center">
-            <div><a href="{{ route('admin.iso.divisi', ['id' => $berkas->id]) }}"
+            <div><a @if ($type == 'iso ') href="{{ route('admin.iso.divisi', ['id' => $berkas->id]) }}" @else href="{{ route('admin.akreditasi.daftar') }}" @endif
                     class="btn btn-primary d-flex align-items-center"><i class="px-2 fas fa-chevron-left"></i><span
                         class="d-none d-md-block">Kembali</span></a></div>
             <div class="mb-2 text-2xl gk-text-base-black d-flex align-items-center" style="flex-direction: column">
                 <div class="font-bold">
                     <div class="dropdown">
-                        <div style="cursor: pointer;" id="inputDropdown" data-bs-toggle="dropdown"
-                            aria-expanded="false">Divisi {{ App\Models\Role::find($role_id)->name }} <i
-                                class="fas fa-chevron-down"></i></div>
+                        @if ($type == 'iso ')
+                            <div style="cursor: pointer;" id="inputDropdown" data-bs-toggle="dropdown"
+                                aria-expanded="false">Divisi {{ App\Models\Role::find($role_id)->name }} <i
+                                    class="fas fa-chevron-down"></i></div>
+                        @else
+                            <div class="text-center" style="cursor: pointer;" aria-expanded="false">Daftar Komponen
+                                Akreditasi</div>
+                        @endif
                         <ul style="max-height: 500px; overflow-y: auto; width: fit-content" class="dropdown-menu "
                             aria-labelledby="divisiDropdown">
                             <!-- Added position-absolute -->
@@ -30,7 +35,9 @@
                     </div>
                 </div>
                 <div class="fs-4">
-                    Berkas {{ $berkas->name }}
+                    @if ($type == 'iso ')
+                        Berkas {{ $berkas->name }}
+                    @endif
                 </div>
             </div>
             <div class="gap-2 d-flex">
@@ -57,41 +64,43 @@
                 <div class="row g-3">
 
                     <!-- Dropdown -->
-                    <div class="col-md-6 position-relative">
-                        <!-- Added position-relative -->
-                        <input type="hidden" id="role" name="formRole" />
-                        <label for=" inputDropdown" class="form-label">Divisi</label>
-                        <div class="dropdown" wire:ignore>
-                            <button
-                                class="px-4 border border-primary btn dropdown-toggle w-100 d-flex align-items-center justify-content-between"
-                                type="button" id="inputDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ $formRole == null ? 'Pilih Divisi' : '' }}
-                            </button>
-                            <ul style="max-height: 500px; overflow-y: auto; width: fit-content"
-                                class="dropdown-menu position-fixed" aria-labelledby="inputDropdown">
-                                <!-- Added position-absolute -->
-                                @foreach (App\Models\Role::all() as $role)
-                                    <li>
-                                        <input type="hidden" id="selectedRoles-{{ $role->id }}"
-                                            wire:model="selectedRoles.{{ $role->id }}" class="form-control">
-                                        <button type="button" class="dropdown-item"
-                                            wire:click="toggleRole({{ intval($role->id) }})"
-                                            onclick="event.stopPropagation(); toggleRole({{ $role->id }})">
-                                            {{ $role->name }} ({{ $role->id }})
-                                            <i id="check-{{ $role->id }}"
-                                                class="fas {{ in_array($role->id, $selectedRoles) ? 'fa-check' : '' }} check-component"></i>
-                                        </button>
-                                    </li>
-                                @endforeach
-                            </ul>
+                    @if ($type == 'iso')
+                        <div class="col-md-6 position-relative">
+                            <!-- Added position-relative -->
+                            <input type="hidden" id="role" name="formRole" />
+                            <label for=" inputDropdown" class="form-label">Divisi</label>
+                            <div class="dropdown" wire:ignore>
+                                <button
+                                    class="px-4 border border-primary btn dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                                    type="button" id="inputDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ $formRole == null ? 'Pilih Divisi' : '' }}
+                                </button>
+                                <ul style="max-height: 500px; overflow-y: auto; width: fit-content"
+                                    class="dropdown-menu position-fixed" aria-labelledby="inputDropdown">
+                                    <!-- Added position-absolute -->
+                                    @foreach (App\Models\Role::all() as $role)
+                                        <li>
+                                            <input type="hidden" id="selectedRoles-{{ $role->id }}"
+                                                wire:model="selectedRoles.{{ $role->id }}" class="form-control">
+                                            <button type="button" class="dropdown-item"
+                                                wire:click="toggleRole({{ intval($role->id) }})"
+                                                onclick="event.stopPropagation(); toggleRole({{ $role->id }})">
+                                                {{ $role->name }} ({{ $role->id }})
+                                                <i id="check-{{ $role->id }}"
+                                                    class="fas {{ in_array($role->id, $selectedRoles) ? 'fa-check' : '' }} check-component"></i>
+                                            </button>
+                                        </li>
+                                    @endforeach
+                                </ul>
 
+                            </div>
+                            @error('selectedRoles')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-                        @error('selectedRoles')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    @endif
                     <!-- Input Text -->
-                    <div class="col-md-6">
+                    <div class="{{ $type == 'iso' ? 'col-md-6' : 'col-md' }}">
                         <label for="inputText" class="form-label">Nama Komponen</label>
                         <input type="text" class="form-control  @error('formName') is-invalid  @enderror"
                             id="inputText" placeholder="Nama Komponen" name="formName" wire:model="formName"
@@ -162,7 +171,9 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Divisi</th>
+                            @if ($type == 'iso')
+                                <th>Divisi</th>
+                            @endif
                             <th>Komponen</th>
                             <th>Actions</th>
                         </tr>
@@ -174,100 +185,116 @@
                             });
                         @endphp
 
-                        @foreach ($filteredKomponen as $index => $item)
-                            @if (true)
-                                <tr class="@if ($loop->odd) bg-light @endif">
-                                    <!-- Role Selection -->
-                                    <td>
-                                        <select id="roleSelect-{{ $loop->index }}" class="form-select w-100">
-                                            @foreach (App\Models\Role::all() as $r)
-                                                @if ($item->access->contains('role_id', $r->id))
-                                                    <option value="{{ $r->id }}">{{ $r->name }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <!-- Komponen Name -->
-                                    <td id="komponen-{{ $loop->index }}" class="cursor-pointer"
-                                        @if ($item->files($berkas->id)->where('role_id', $role_id)->get()->isNotEmpty()) onclick="toggleShowFile({{ $item->files($berkas->id)->where('role_id', $role_id)->get()->count() }}, '{{ $item->id }}')" @endif>
-                                        {{ $item->name }}
-                                        @if ($item->files($berkas->id)->where('role_id', $role_id)->get()->isNotEmpty())
-                                            <span><i style="transition: transform 0.3s ease-in-out;"
-                                                    class="cursor-pointer fas fa-chevron-down"
-                                                    id="icon-komponen-{{ $item->id }}"></i></span>
-                                        @endif
+                        @if ($type == 'iso')
+                            @foreach ($filteredKomponen as $index => $item)
+                                @if (true)
+                                    <tr class="@if ($loop->odd) bg-light @endif">
+                                        <!-- Role Selection -->
+                                        <td>
+                                            <select id="roleSelect-{{ $loop->index }}" class="form-select w-100">
+                                                @foreach (App\Models\Role::all() as $r)
+                                                    @if ($item->access->contains('role_id', $r->id))
+                                                        <option value="{{ $r->id }}">{{ $r->name }}
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <!-- Komponen Name -->
+                                        <td id="komponen-{{ $loop->index }}" class="cursor-pointer"
+                                            @if ($item->files($berkas->id)->where('role_id', $role_id)->get()->isNotEmpty()) onclick="toggleShowFile({{ $item->files($berkas->id)->where('role_id', $role_id)->get()->count() }}, '{{ $item->id }}')" @endif>
+                                            {{ $item->name }}
+                                            @if ($item->files($berkas->id)->where('role_id', $role_id)->get()->isNotEmpty())
+                                                <span><i style="transition: transform 0.3s ease-in-out;"
+                                                        class="cursor-pointer fas fa-chevron-down"
+                                                        id="icon-komponen-{{ $item->id }}"></i></span>
+                                            @endif
 
-                                        <!-- Files Section -->
-                                        <div class="px-2">
-                                            @php
-                                                $files = $item->files($berkas->id)->where('role_id', $role_id)->get();
-                                            @endphp
-                                            @if ($files->isNotEmpty())
-                                                <div id="komponen-file-{{ $item->id }}"
-                                                    style="transition: height 0.3s ease-in-out; overflow: hidden; height: 0px;">
-                                                    @foreach ($item->files($berkas->id)->get() as $f)
-                                                        <div class="gap-2 px-2 mb-2 row justify-content-between"
-                                                            style="flex-wrap: nowrap;">
-                                                            <input value="{{ $f->filename }}" readonly
-                                                                class="overflow-auto border rounded col ms-2"
-                                                                style="flex-wrap: nowrap;overflow:scroll;" />
-                                                            <div class="gap-2 col d-flex">
-                                                                <button class="btn btn-sm btn-secondary"
-                                                                    onclick="showPdfModal('{{ $f->path }}', '{{ $f->filename }}')">
-                                                                    <i class="fas fa-eye"></i>
-                                                                </button>
-                                                                <button class="btn btn-sm btn-warning">
-                                                                    <i class="fas fa-info-circle"></i>
-                                                                </button>
-                                                                <button class="btn btn-sm btn-danger">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </button>
+                                            <!-- Files Section -->
+                                            <div class="px-2">
+                                                @php
+                                                    $files = $item
+                                                        ->files($berkas->id)
+                                                        ->where('role_id', $role_id)
+                                                        ->get();
+                                                @endphp
+                                                @if ($files->isNotEmpty())
+                                                    <div id="komponen-file-{{ $item->id }}"
+                                                        style="transition: height 0.3s ease-in-out; overflow: hidden; height: 0px;">
+                                                        @foreach ($item->files($berkas->id)->get() as $f)
+                                                            <div class="gap-2 px-2 mb-2 row justify-content-between"
+                                                                style="flex-wrap: nowrap;">
+                                                                <input value="{{ $f->filename }}" readonly
+                                                                    class="overflow-auto border rounded col ms-2"
+                                                                    style="flex-wrap: nowrap;overflow:scroll;" />
+                                                                <div class="gap-2 col d-flex">
+                                                                    <button class="btn btn-sm btn-secondary"
+                                                                        onclick="showPdfModal('{{ $f->path }}', '{{ $f->filename }}')">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-warning">
+                                                                        <i class="fas fa-info-circle"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-danger">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </td>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </td>
 
-                                    <!-- Action Buttons -->
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a class="btn btn-info" data-bs-toggle="modal"
-                                                data-bs-target="#uploadFileModal"
-                                                wire:click='selectForUpload("{{ $item->id }}")'>
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-
-                                            @if (auth()->user()->pangkat == 0)
-                                                <a class="btn btn-secondary" wire:click="edit('{{ $item->id }}')"
-                                                    onclick="embedRole('{{ $item->name }}',{{ $item->access }});">
-                                                    <i class="fas fa-pen"></i>
+                                        <!-- Action Buttons -->
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a class="btn btn-info" data-bs-toggle="modal"
+                                                    data-bs-target="#uploadFileModal"
+                                                    wire:click='selectForUpload("{{ $item->id }}")'>
+                                                    <i class="fas fa-plus"></i>
                                                 </a>
-                                            @endif
 
-                                            <a class="btn btn-warning"
-                                                href="{{ route('admin.iso.komponen.kelola', ['berkasId' => $berkas->id, 'komponenId' => $item->id, 'role_id' => $role_id]) }}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
+                                                @if (auth()->user()->pangkat == 0)
+                                                    <a class="btn btn-secondary"
+                                                        wire:click="edit('{{ $item->id }}')"
+                                                        onclick="embedRole('{{ $item->name }}',{{ $item->access }});">
+                                                        <i class="fas fa-pen"></i>
+                                                    </a>
+                                                @endif
 
-                                            <button class="btn btn-dark"
-                                                wire:click="downloadZip('{{ $item->id }}', '{{ $berkas->id }}')">
-                                                <i class="fas fa-download"></i>
-                                            </button>
+                                                <a class="btn btn-warning"
+                                                    href="{{ route('admin.iso.komponen.kelola', ['berkasId' => $berkas->id, 'komponenId' => $item->id, 'role_id' => $role_id]) }}">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
 
-                                            @if (auth()->user()->pangkat == 0)
-                                                <button class="btn btn-danger"
-                                                    wire:click="confirmDelete('{{ $item->id }}')">
-                                                    <i class="fas fa-trash"></i>
+                                                <button class="btn btn-dark"
+                                                    wire:click="downloadZip('{{ $item->id }}', '{{ $berkas->id }}')">
+                                                    <i class="fas fa-download"></i>
                                                 </button>
-                                            @endif
-                                        </div>
-                                    </td>
 
+                                                @if (auth()->user()->pangkat == 0)
+                                                    <button class="btn btn-danger"
+                                                        wire:click="confirmDelete('{{ $item->id }}')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @else
+                            @foreach ($komponen as $k)
+                                <tr class="@if ($loop->odd) bg-light @endif">
+                                    <td>
+                                        {{$k->name}}
+                                    </td>
+                                    <td></td>
                                 </tr>
-                            @endif
-                        @endforeach
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             @elseif($display == 2)
@@ -423,7 +450,7 @@
                             "<strong>{{ $confirmingDelete != null
                                 ? $confirmingDelete->name
                                 : "Nama
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Berkas" }}</strong>"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Berkas" }}</strong>"
                             untuk
                             mengonfirmasi penghapusan:</p>
                         <input type="text" class="form-control" wire:model="confirmingDeleteText">
