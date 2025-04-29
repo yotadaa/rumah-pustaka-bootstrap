@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accesses', function (Blueprint $table) {
+        //
+        Schema::create('indikators', function (Blueprint $table) {
             $table->id();
-            $table->string('komponen_id');
-            $table->integer('role_id');
+            $table->string('name');
+            $table->uuid(column: 'aspek_id');
+            $table->uuid('komponen_id');
+            $table->uuid('berkas_id');
+            $table->boolean('multiple');
             $table->timestamps();
         });
     }
@@ -24,8 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accesses');
+        //
+        Schema::dropIfExists('indikators');
+
     }
-
-
 };

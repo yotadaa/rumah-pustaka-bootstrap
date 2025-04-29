@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accesses', function (Blueprint $table) {
-            $table->id();
-            $table->string('komponen_id');
-            $table->integer('role_id');
+        //
+        Schema::create('aspeks', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->integer('no');
+            $table->uuid('komponen_id');
+            $table->uuid('berkas_id');
             $table->timestamps();
         });
     }
@@ -24,8 +27,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accesses');
+        //
+        Schema::dropIfExists('aspeks');
+
     }
-
-
 };

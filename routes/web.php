@@ -28,6 +28,8 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function() {
     Route::group(['prefix' => 'akreditasi'], function() {
         Route::get('', [AdminController::class, 'akreditasi'])->name('admin.akreditasi.daftar');
         Route::get('/komponen/{id}/{role_id}', [AkreditasiController::class, 'komponen'])->name('admin.akreditasi.komponen');
+        Route::get('/komponen/aspek/{berkas_id}/{komponen_id}', [AkreditasiController::class,'viewAspek'])->name('admin.akreditasi.aspek');
+        Route::get('/komponen/aspek/indikator/{berkas_id}/{komponen_id}/{aspek_id}', [AkreditasiController::class,'viewIndikator'])->name('admin.akreditasi.indikator');
         
     });
 

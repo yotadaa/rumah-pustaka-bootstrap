@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('model');
+            $table->integer('bobot')->nullable();
+            $table->integer('skor')->nullable();
             $table->timestamps();
         });
     }

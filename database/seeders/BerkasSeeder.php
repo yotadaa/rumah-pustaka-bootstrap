@@ -21,6 +21,83 @@ class BerkasSeeder extends Seeder
      */
     public function run(): void
     {
+
+        $komponen_akreditas = [
+            [
+                "name"=> "1. Koleksi Perpustakaan",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 15,
+                "skor" => 90,
+            ],
+            [
+                "name"=> "2. Sarana dan Prasarana Perpustakaan",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 10,
+                "skor" => 75,
+            ],
+            [
+                "name"=> "3. Pelayanann Perpustakaan",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 20,
+                "skor" => 75,
+            ],
+            [
+                "name"=> "4. Tenaga Perpustakaan",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 15,
+                "skor" => 50,
+            ],
+            [
+                "name"=> "5. Penyelenggaraan Perpustakaan",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 10,
+                "skor" => 45,
+            ],
+            [
+                "name"=> "6. Pengelolaan Perpustakaan",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 15,
+                "skor" => 30,
+            ],
+            [
+                "name"=> "7. Inovasi dan Kreativitas",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 5,
+                "skor" => 25,
+            ],
+            [
+                "name"=> "8. Tingkat Kegemaran Membaca",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 5,
+                "skor" => 20,
+            ],
+            [
+                "name"=> "9. Indeks Pembangunan Literasi Masyarakat",
+                "id" => Str::uuid(),
+                "model" => "akreditasi",
+                "bobot" => 5,
+                "skor" => 20,
+            ],
+        ];
+
+        Berkas::create([
+            'id' => Str::uuid(),
+            'name' => 'Penilaian Akreditasi 2025',
+            'model' => 'akreditasi',
+        ]);
+
+        foreach ($komponen_akreditas as $akr) {
+            Komponen::create($akr);
+        }
+
         $uuid = 'a94d6b12-d5d5-4013-a580-7c3705ca6079';
         Berkas::create([
             'id' => $uuid,

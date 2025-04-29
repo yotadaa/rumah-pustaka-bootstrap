@@ -14,7 +14,7 @@ class Komponen extends Model
     protected $keyType = 'string';
 
     // Fillable fields
-    protected $fillable = ['id', 'name', 'model'];
+    protected $fillable = ['id', 'name', 'model', 'skor', 'bobot'];
 
     // Automatically generate UUID when creating a new Berkas
     protected static function boot()

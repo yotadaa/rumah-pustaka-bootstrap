@@ -13,4 +13,12 @@ class AkreditasiController extends Controller
         return view('admin.iso.komponen', compact('id', 'role_id','type'));
     }
 
+    public function viewAspek($berkas_id, $komponen_id) {
+        return view('admin.akreditasi.aspek', compact('berkas_id','komponen_id'));
+    }
+
+    public function viewIndikator($berkas_id, $komponen_id, $aspek_id) {
+        return view('admin.akreditasi.indikator', compact('berkas_id','komponen_id','aspek_id'));
+    }
+
 }

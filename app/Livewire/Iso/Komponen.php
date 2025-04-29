@@ -40,6 +40,8 @@ class Komponen extends Component
     public $showForm = false;
     public $selectedRoles = [];
     public $formName;
+    public $formBobot = 0;
+    public $formSkor = 0;
     public $formRole;
 
     //file
@@ -64,6 +66,9 @@ class Komponen extends Component
         $this->id = $id;
         $this->role_id = $role_id;
         $this->type = $type;
+        if (!Berkas::find($this->id)) {
+            return redirect()->route('admin.akreditasi.daftar');
+        }
     }
 
     public function changeDisplay()
@@ -146,7 +151,7 @@ class Komponen extends Component
 
     public function onChange()
     {
-        // Log::info("Name updated to: {$this->name}");
+        Log::info("Name updated to: {$this->formName}");
     }
 
     public function selectForUpload($id)
@@ -195,6 +200,8 @@ class Komponen extends Component
         } else {
             $this->validate([
                 'formName' => 'required|string|max:255',
+                'formSkor' => 'required|int',
+                'formBobot' => 'required|int',
             ]);
         }
 
@@ -226,6 +233,8 @@ class Komponen extends Component
                 Access::create([
                     'komponen_id' => $this->komponenId,
                     'role_id' => $role,
+                    'skor' => $this->formSkor,
+                    'bobot' => $this->formBobot,
                 ]);
             }
 
@@ -244,6 +253,8 @@ class Komponen extends Component
                 Access::create([
                     'komponen_id' => $data['id'],
                     'role_id' => $role,
+                    'skor' => $this->formSkor,
+                    'bobot' => $this->formBobot,
                 ]);
             }
         }
@@ -283,7 +294,26 @@ class Komponen extends Component
 
             $this->roles = Role::where('id', $this->role_id)->get();
         } else {
-            $this->komponen = Matriks::where('model', $this->type)->get();
+            $this->komponen = Matriks::where('model', $this->type)->get()
+            ->sortBy(function ($item) {
+                // Extract the main section number and sub-section numbers
+                preg_match('/^(\d+)(?:\.(\d+(?:\.\d+)*))?/', $item->name, $matches);
+
+                $mainSection = (int) ($matches[1] ?? 0); // Main section number (e.g., 4, 5, 6)
+                $subSection = $matches[2] ?? '0'; // Sub-section number (e.g., 1, 2, 1.1, 1.2)
+
+                // Convert the sub-section into a sortable format (e.g., "1.2" => "0001.0002")
+                $subSectionParts = explode('.', $subSection);
+                $subSectionFormatted = implode(
+                    '.',
+                    array_map(function ($part) {
+                        return str_pad($part, 4, '0', STR_PAD_LEFT); // Pad each part with leading zeros
+                    }, $subSectionParts),
+                );
+
+                // Combine main section and sub-section for sorting
+                return sprintf('%04d.%s', $mainSection, $subSectionFormatted);
+            });
         }
 
         return view('livewire.iso.komponen');
