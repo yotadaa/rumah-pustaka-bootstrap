@@ -63,6 +63,7 @@ class Berkas extends Component
         }
 
         $this->resetForm();
+        $this->dispatch('close-modal');
     }
 
     public function editnama($id)
@@ -138,10 +139,10 @@ class Berkas extends Component
             foreach ($roles as $role) {
                 foreach ($files as $file) {
                     $komponen = Komponen::find($file->komponen_id);
-//&& in_array($role->id, auth()->user()->access->pluck('role_id')->toArray())        
-                    if ($komponen && in_array($role->id, $komponen->access->pluck('role_id')->toArray()) ) {
+                    //&& in_array($role->id, auth()->user()->access->pluck('role_id')->toArray())        
+                    if ($komponen && in_array($role->id, $komponen->access->pluck('role_id')->toArray())) {
                         $filePath = public_path($file->path);
-        
+
                         if (file_exists($filePath)) {
                             $relativePath = $role->name . '/' . $komponen->name . '/' . basename($filePath);
                             $zip->addFile($filePath, $relativePath);

@@ -260,6 +260,8 @@ class Komponen extends Component
         }
 
         // dd($this->selectedRoles);
+        $this->dispatch('close-modal', id: 'berkasModal');
+        $this->dispatch("function(event){console.log(123)}();");
         $this->resetForm();
         $this->toggleForm();
     }
@@ -295,25 +297,25 @@ class Komponen extends Component
             $this->roles = Role::where('id', $this->role_id)->get();
         } else {
             $this->komponen = Matriks::where('model', $this->type)->get()
-            ->sortBy(function ($item) {
-                // Extract the main section number and sub-section numbers
-                preg_match('/^(\d+)(?:\.(\d+(?:\.\d+)*))?/', $item->name, $matches);
+                ->sortBy(function ($item) {
+                    // Extract the main section number and sub-section numbers
+                    preg_match('/^(\d+)(?:\.(\d+(?:\.\d+)*))?/', $item->name, $matches);
 
-                $mainSection = (int) ($matches[1] ?? 0); // Main section number (e.g., 4, 5, 6)
-                $subSection = $matches[2] ?? '0'; // Sub-section number (e.g., 1, 2, 1.1, 1.2)
+                    $mainSection = (int) ($matches[1] ?? 0); // Main section number (e.g., 4, 5, 6)
+                    $subSection = $matches[2] ?? '0'; // Sub-section number (e.g., 1, 2, 1.1, 1.2)
+    
+                    // Convert the sub-section into a sortable format (e.g., "1.2" => "0001.0002")
+                    $subSectionParts = explode('.', $subSection);
+                    $subSectionFormatted = implode(
+                        '.',
+                        array_map(function ($part) {
+                            return str_pad($part, 4, '0', STR_PAD_LEFT); // Pad each part with leading zeros
+                        }, $subSectionParts),
+                    );
 
-                // Convert the sub-section into a sortable format (e.g., "1.2" => "0001.0002")
-                $subSectionParts = explode('.', $subSection);
-                $subSectionFormatted = implode(
-                    '.',
-                    array_map(function ($part) {
-                        return str_pad($part, 4, '0', STR_PAD_LEFT); // Pad each part with leading zeros
-                    }, $subSectionParts),
-                );
-
-                // Combine main section and sub-section for sorting
-                return sprintf('%04d.%s', $mainSection, $subSectionFormatted);
-            });
+                    // Combine main section and sub-section for sorting
+                    return sprintf('%04d.%s', $mainSection, $subSectionFormatted);
+                });
         }
 
         return view('livewire.iso.komponen');

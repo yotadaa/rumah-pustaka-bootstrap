@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset('fontawesome-free-6.5.2-web/css/all.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/color.css/color.css" />
     <link rel="stylesheet" href="{{ asset('assets/color.css') }}" />
+	<link rel="stylesheet" href="{{asset('rich-text-editor/res/style.css')}}" />
 
     {{--
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> --}}
@@ -88,11 +89,12 @@
     @vite('resources/js/app.js')
 </head>
 
-<body >
+<body>
 
 
 
-    <div id="modal" class="top-0 left-0 w-full h-full d-none align-items-center justify-content-start position-fixed"
+    <div id="modal"
+        class="top-0 left-0 w-full h-full d-none align-items-center justify-content-start position-fixed"
         style="overflow-x: auto; padding: 0 10%;z-index: 999; background-color: rgba(0,0,0,.2)">
         <img class="cursor-pointer position-fixed" onclick="closeModal()" src="" width="50"
             style="top: 20px; right: 20px;filter: drop-shadow(0px 0px 10px black) max-height: 500px;" />
@@ -121,6 +123,8 @@
             @include('admin.template.footer')
         </div>
     </div>
+
+    @stack('scritps')
     <script src="{{ asset('modernize/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('modernize/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
 
@@ -135,6 +139,9 @@
     @include('admin.template.modal')
     @include('admin.template.modal-notif')
 
+
+
+	<script src="{{asset('rich-text-editor/res/patch.js')}}"></script>
 
     <script>
         function select(event, callerId, inputId, value) {

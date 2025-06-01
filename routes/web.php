@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 // Publicly accessible routes
 
-Route::get('/', function() {
+Route::get('/', function () {
     return redirect()->route('admin.dashboard');
 });
 
@@ -22,18 +22,18 @@ Route::get('/login', [AdminController::class, 'login'])->name('login')->middlewa
 Route::get('/register', [AdminController::class, 'register'])->name('register')->middleware('auth'); // Only authenticated users
 
 // Protected routes (Only accessible by authenticated users)
-Route::group(["prefix" => "admin", "middleware" => "auth"], function() {
+Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    Route::group(['prefix' => 'akreditasi'], function() {
+    Route::group(['prefix' => 'akreditasi'], function () {
         Route::get('', [AdminController::class, 'akreditasi'])->name('admin.akreditasi.daftar');
         Route::get('/komponen/{id}/{role_id}', [AkreditasiController::class, 'komponen'])->name('admin.akreditasi.komponen');
-        Route::get('/komponen/aspek/{berkas_id}/{komponen_id}', [AkreditasiController::class,'viewAspek'])->name('admin.akreditasi.aspek');
-        Route::get('/komponen/aspek/indikator/{berkas_id}/{komponen_id}/{aspek_id}', [AkreditasiController::class,'viewIndikator'])->name('admin.akreditasi.indikator');
-        
+        Route::get('/komponen/aspek/{berkas_id}/{komponen_id}', [AkreditasiController::class, 'viewAspek'])->name('admin.akreditasi.aspek');
+        Route::get('/komponen/aspek/sub-aspek/{berkas_id}/{komponen_id}/{aspek_id}', [AkreditasiController::class, 'viewSubAspek'])->name('admin.akreditasi.sub-aspek');
+
     });
 
-    Route::group(['prefix' => 'iso'], function() {
+    Route::group(['prefix' => 'iso'], function () {
         Route::get('', [AdminController::class, 'iso'])->name('admin.iso.daftar');
         Route::get('/komponen/{id}/{role_id}', [IsoController::class, 'komponen'])->name('admin.iso.komponen');
         Route::get('/divisi/{id}', [IsoController::class, 'divisi'])->name('admin.iso.divisi');

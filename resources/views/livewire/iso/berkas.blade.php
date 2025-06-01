@@ -2,7 +2,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-2" style="flex-wrap: wrap; overflow-x: auto;">
             <li class="breadcrumb-item">
-                <a href="#">Akreditasi</a>
+                <a href="#">Akreditasis</a>
             </li>
             <li class="breadcrumb-item active"> Daftar Berkas
                 {{-- Berkas {{ \App\Models\Berkas::findOrFail($)->name }} --}}
@@ -17,39 +17,43 @@
                     {{ $type == 'akreditasi' ? 'Daftar Berkas Penilaian' : 'Daftar Berkas' }}
                 </label>
                 @if (auth()->user()->pangkat == 0)
-                    <button class="gap-1 btn btn-primary d-flex align-items-center" wire:click="toggleFormBerkas">
-                        <i class="bi {{ $showFormBerkas ? 'bi-dash' : 'bi-plus' }} fs-5"></i>
-                        <span>{{ $showFormBerkas ? 'Tutup Form' : 'Tambah Berkas' }}</span>
+                    <button class="gap-1 btn btn-primary d-flex align-items-center" data-bs-toggle="modal"
+                        data-bs-target="#berkasModal">
+                        <i class="bi bi-plus fs-5"></i>
+                        <span>Tambah Berkas</span>
                     </button>
                 @endif
             </div>
         </div>
 
+
         <div class="border-2 border-top"
             style="overflow: hidden; max-height: {{ $showFormBerkas ? '1000px' : '0' }}; transition: all 0.3s ease;">
-            <form wire:submit.prevent="submit">
-                <div class="p-4">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="row align-items-end g-2">
-                                <div class="col-md-8">
-                                    <label class="form-label">Judul Berkas</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                        placeholder="Masukkan judul berkas" wire:model="name">
-                                    @error('name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-4">
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        {{ $berkasId ? 'Simpan Perubahan' : 'Tambah Berkas' }}
-                                    </button>
+            <x-modal id="berkasModal" title="{{ $berkasId ? 'Edit Berkas' : 'Tambah Berkas' }}">
+                <form wire:submit.prevent="submit">
+                    <div class="p-4">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="row align-items-end g-2">
+                                    <div class="col-12">
+                                        <label class="form-label">Judul Berkas</label>
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                            placeholder="Masukkan judul berkas" wire:model="name">
+                                        @error('name')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <button data-bs-toggle="modal" data-bs-target="#berkasModal" type="submit"
+                                            class="btn btn-primary w-100"> Simpan Perubahan
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </x-modal>
         </div>
 
         @if (session()->has('message'))
@@ -75,7 +79,8 @@
                                 <!-- Edit Button -->
                                 <div class="gap-2 d-flex">
                                     @if (auth()->user()->pangkat == 0)
-                                        <button style="padding: 10px 10px;"
+                                        <button style="padding: 10px 10px;" data-bs-toggle="modal"
+                                            data-bs-target="#berkasModal"
                                             class="gap-2 fs-3 btn btn-sm btn-secondary d-flex align-items-center"
                                             wire:click="editnama('{{ $item->id }}')">
                                             <i class="fas fa-pen"></i>
@@ -136,7 +141,7 @@
                                 "<strong>{{ $confirmingDelete != null
                                     ? $confirmingDelete->name
                                     : "Nama
-                                                                                                                                                                                                                                                                                                        Berkas" }}</strong>"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Berkas" }}</strong>"
                                 untuk
                                 mengonfirmasi penghapusan:</p>
                             <input type="text" class="form-control" wire:model="confirmingDeleteText">
