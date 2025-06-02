@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Indikator extends Model
+class OpsiIndikator extends Model
 {
     //
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $table = 'OpsiIndikators';
+
     protected $fillable = [
         'id',
-        'content',
-        'aspek_id',
-        'sub_aspek_id',
-        'multiple'
+        'indikator_id',
+        'konten',
+        'option',
     ];
 }
