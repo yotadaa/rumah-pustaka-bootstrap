@@ -13,13 +13,19 @@
     <link rel="stylesheet" href="{{ asset('componen/tailwind-classes.css') }}" />
     <link rel="stylesheet" href="{{ asset('componen/colorplate.css') }}" />
     <link rel="stylesheet" href="{{ asset('fontawesome-free-6.5.2-web/css/all.css') }}">
-    <link rel="stylesheet" href="https://unpkg.com/color.css/color.css" />
+    <link rel="stylesheet" href="{{ asset('css/color.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/color.css') }}" />
-	<link rel="stylesheet" href="{{asset('rich-text-editor/res/style.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/trix.css') }}">
+    <script type="text/javascript" src="{{ asset('js/trix.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.js"></script>
+
+
+    {{-- <link rel="stylesheet" href="{{asset('rich-text-editor/res/style.css')}}" /> --}}
 
     {{--
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/all.min.css') }}">
 
     <!-- Bootstrap CSS -->
 
@@ -86,7 +92,8 @@
 
 
     @livewireStyles
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.js'])
+    {{-- @trixassets --}}
 </head>
 
 <body>
@@ -141,7 +148,7 @@
 
 
 
-	<script src="{{asset('rich-text-editor/res/patch.js')}}"></script>
+    <script src="{{ asset('rich-text-editor/res/patch.js') }}"></script>
 
     <script>
         function select(event, callerId, inputId, value) {

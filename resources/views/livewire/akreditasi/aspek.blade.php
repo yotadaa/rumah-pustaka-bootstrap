@@ -179,6 +179,21 @@
         </div>
 
         <div class="p-4 overflow-auto border-2">
+            <div class="p-3">
+                <div class="row fs-4 text-dark">
+                    <ul class="col-2">
+                        <li>Aspek Komponen</li>
+                        <li>Skor Maksimum</li>
+                        <li>Bobot</li>
+                    </ul>
+                    <ul class="col-2">
+                        <li>: {{ App\Models\Komponen::findOrFail($komponen_id)->name }}</li>
+                        <li>: {{ App\Models\Komponen::findOrFail($komponen_id)->skor }}</li>
+                        <li>: {{ App\Models\Komponen::findOrFail($komponen_id)->bobot }}</li>
+                    </ul>
+                </div>
+
+            </div>
             @if ($aspek->isNotEmpty())
                 <table class="table">
                     <thead>

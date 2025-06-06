@@ -37,9 +37,6 @@
                     </div>
                 </div>
                 <div class="gap-2 d-flex">
-                    {{-- <button class="gap-1 btn btn-primary d-flex align-items-center" wire:click="changeDisplay"
-                        style="padding: 10px 12px;"><i
-                            class="@if ($display == 2) fas fa-th  @else fas fa-list @endif "></i></button> --}}
                 </div>
 
                 <script></script>
@@ -49,47 +46,97 @@
         <div class="px-4 overflow-auto py-2 d-flex gap-2 flex-column border-bottom border-2">
             <div class="fs-5 fw-bold text-dark">Terdapat {{ count($sub_aspeks) }} Sub Aspek</div>
         </div>
-        <div class="p-4 overflow-auto border-2 d-flex gap-2 flex-column">
-            <button class="gap-1 btn btn-primary w-fit" wire:click='toggleModal("tambah-sub-aspek")'>
-                <i class="fa fa-circle-plus"></i>
-                <span>Tambah Sub-Aspek</span>
-            </button>
+        <div class="p-4 overflow-auto border-2 d-flex gap-0 flex-column">
+
+            @if (auth()->user()->pangkat == 0)
+                <div class="row px-3 gap-2">
+                    <button class="gap-2 col-12 col-md-2 btn btn-primary " wire:click='toggleModal("tambah-sub-aspek")'>
+                        <i class="fa fa-plus"></i>
+                        <span>Tambah Sub-Aspek</span>
+                    </button>
+                    <button wire:click='toggleModal("tambah-indikator", false, "tambah-indikator", null)'
+                        class="btn col-12 col-md-2 btn-sm btn-light border-dark fs-3" wire:ignore>
+                        <i class="fas fa-plus"></i> <span class="d-md-inline d-none">Tambah Indikator</span>
+                    </button>
+                </div>
+            @endif
+
+            <div style=""
+                class="my-1 bg-light border-dark border overflow-auto rounded fw-bold text-dark w-100 p-0 m-0 d-flex align-items-center justify-content-between ">
+                <div class="d-flex align-items-center ">
+                    <div class="btn btn-dark p-1 px-2 rounded-0">
+                        <i class="fa fa-circle-info"></i>
+                    </div>
+                    <div class="px-2">Indikator tanpa sub-aspek</div>
+                </div>
+                <div class="btn btn-dark rounded-0 p-1 px-2">
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+            </div>
+
+
+            @foreach ($indikator as $ind)
+                @if ($ind->sub_aspek_id == null)
+                    @include('livewire.akreditasi.sub-aspek.no-sub-aspek', [
+                        'ind' => $ind,
+                        'aspek_id' => $aspek_id,
+                    ])
+                @endif
+            @endforeach
+
             @foreach ($sub_aspeks as $sub)
+                @php $sub_loop = $loop; @endphp
+
                 <div style=""
-                    class="bg-dark rounded fw-bold text-light w-100 p-0 m-0 d-flex align-items-center justify-content-between px-1">
-                    <div class="d-flex align-items-center ">
-                        <div class="cursor-pointer"
+                    class="my-1 bg-light border-dark border overflow-auto rounded fw-bold text-dark w-100 p-0 m-0 d-flex align-items-center justify-content-between ">
+                    <div class="d-flex align-items-center gap-0 p-0 ">
+                        <div class="cursor-pointer btn btn-sm btn-dark rounded-0 p-1"
                             @if ($loop->index != 0) wire:click="changeDirection('{{ $sub->id }}', 1)" @endif>
-                            <i class="px-1 fas fa-chevron-up @if ($loop->index == 0) text-dark @endif"></i>
+                            <i class="px-2 fas fa-chevron-up @if ($loop->index == 0) text-dark @endif"></i>
                         </div>
-                        <div class="cursor-pointer"
+                        <div class="cursor-pointer btn btn-sm btn-dark rounded-0 p-1 "
                             @if ($loop->index != count($sub_aspeks) - 1) wire:click="changeDirection('{{ $sub->id }}', -1)" @endif>
                             <i class="px-1 fas fa-chevron-down @if ($loop->index == count($sub_aspeks) - 1) text-dark @endif "></i>
                         </div>
-                        <div class="p-2"> {{ $aspek->no }}.{{ $sub->no }}. {{ $sub->name }}</div>
+                        <div class="px-2"> {{ $aspek->no }}.{{ $sub->no }}. {{ $sub->name }}</div>
                     </div>
-                    <div class="" style="flex-wrap: nowrap;white-space: nowrap;">
+                    <div class="d-flex gap-1" style="flex-wrap: nowrap;white-space: nowrap;">
 
                         @if (auth()->user()->pangkat == 0)
-                            <a wire:click='toggleModal("tambah-indikator", false, "tambah-indikator", "{{ $sub->id }}")'
-                                class="btn btn-sm btn-light" wire:ignore>
+                            <button
+                                wire:click='toggleModal("tambah-indikator", false, "tambah-indikator", "{{ $sub->id }}")'
+                                class="btn btn-sm btn-dark border-light" wire:ignore>
                                 <i class="fas fa-plus"></i> <span class="d-md-inline d-none">Tambah Indikator</span>
-                            </a>
+                            </button>
                         @endif
                         @if (auth()->user()->pangkat == 0)
-                            <a class="btn btn-sm btn-secondary"
+                            <button class="btn btn-sm btn-secondary  "
                                 wire:click='toggleModal("tambah-sub-aspek", false, "edit","{{ $sub->id }}")'>
                                 <i class="fas fa-pen"></i>
-                            </a>
+                            </button>
                         @endif
                         @if (auth()->user()->pangkat == 0)
-                            <button class="btn btn-sm btn-danger"
+                            <button class="btn btn-sm btn-danger "
                                 wire:click='toggleModal("delete-sub-aspek", false, "del","{{ $sub->id }}")'>
                                 <i class="fas fa-trash"></i>
                             </button>
                         @endif
+                        <div class="btn btn-sm btn-dark rounded-0 p-1 px-2">
+                            <i class="fa fa-chevron-down"></i>
+                        </div>
                     </div>
                 </div>
+                @php
+                    $ind_loop = 0;
+                @endphp
+                @foreach ($indikator as $ind)
+                    @if ($ind->sub_aspek_id == $sub->id)
+                        @include('livewire.akreditasi.sub-aspek.no-sub-aspek', [
+                            'ind' => $ind,
+                            'aspek_id' => $aspek_id,
+                        ])
+                    @endif
+                @endforeach
             @endforeach
         </div>
     </div>
@@ -103,10 +150,21 @@
 
 
     <x-my-modal modal="{{ $modal }}">
-        <section key="modal-{{ $modal }}" style="transition: opacity 0.3s ease, visibility 0.3s ease;">
+        @if ($is_processing)
+            <div class="position-absolute rounded-2"
+                style="width: 100%; height: 100%; top: 0; left: 0;background-color:rgba(0,0,0,.5)">
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        @endif
+        <section key="modal-{{ $modal }}" style="transition: all 0.3s ease, visibility 0.3s ease; "
+            class="overflow-y-auto">
             @switch ($modal)
                 @case('tambah-sub-aspek')
-                    <form wire:submit.prevent="subAspekForm">
+                    <form style="transition: opacity 0.3s ease, visibility 0.3s ease;" wire:submit.prevent="subAspekForm">
                         <div class="row g-3">
 
                             <!-- Dropdown -->
@@ -124,7 +182,8 @@
 
                         <!-- Submit Button -->
                         <div class="mt-3 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary w-full mb-2 shadow border">Simpan Perubahan</button>
+                            <button type="submit" class="btn btn-primary w-full mb-2 shadow border">Simpan
+                                Perubahan</button>
                         </div>
 
                         <!-- Success Message -->
@@ -138,7 +197,8 @@
 
                 @case('delete-sub-aspek')
                     <header class="fs-4 fw-bold text-dark">Konfirmasi Penghapusan</header>
-                    <section><span class="fw-bold text-dark">Peringatan!</span> dengan menghapus sub-aspek, maka seluruh
+                    <section><span class="fw-bold text-dark">Peringatan!</span> dengan menghapus sub-aspek,
+                        maka seluruh
                         indikator di dalamnya akan ikut terhapus!</section>
                     <section class="mt-2">
                         Konfirmasi penghapusan dengan mengetik "<span
@@ -161,43 +221,63 @@
                 @break
 
                 @case('tambah-indikator')
-                    <form class="my-2" wire:submit.prevent="submit_indikator">
-                        <div class="form-group">
-                            <label class="form-label">Konten Indikator</label>
-                            <textarea name="indikator_konten" wire:model='indikator_konten' placeholder="Masukkan Kontent Indikator"
-                                class="form-control border-dark"></textarea>
-                        </div>
+                    <form
+                        style="transition: all 0.3s ease, visibility 0.3s ease;opacity: {{ $modal != null ? '1' : '0' }};visibility: {{ $modal != null ? 'visible' : 'hidden' }};"
+                        class="my-2 " wire:submit.prevent="submit_indikator">
+                        <div class="overflow-y-auto" style="max-height: 500px;">
+                            <div class="form-group">
+                                <label class="form-label">Konten Indikator</label>
 
-                        <button class="btn btn-info w-full my-2" wire:click='toggleMultiSoal()'>Multi-Soal</button>
+                                {{-- 🔑 Bind this to Livewire --}}
+                                <div x-data="{ content: '' }" wire:ignore>
+                                    <input type="hidden" id="indikator_konten_input" wire:model.defer="indikator_konten">
+                                    <div>
+                                        <trix-editor class="overflow-y-auto" style="max-height: 300px;"
+                                            input="indikator_konten_input"></trix-editor>
+                                    </div>
+                                    <script>
+                                        const input_trix = document.getElementById("indikator_konten_input");
+                                        input_trix.addEventListener("input", function(event) {
+                                            console.log("test");
+                                        });
+                                    </script>
+                                </div>
+                            </div>
 
-                        <div @if ($indikator_multi) style="opacity: 0.3; pointer-events: none;" @endif>
-                            <div class="form-group mt-2">
-                                <label class="form-label">Pilihan</label>
-                            </div>
-                            <div class="form-group py-1 d-flex align-items-center">
-                                <label class="form-label px-2">a. </label>
-                                <input placeholder="Pilihan a" name="indikator_a" wire:model="indikator_a"
-                                    class="form-control " />
-                            </div>
-                            <div class="form-group py-1 d-flex align-items-center">
-                                <label class="form-label px-2">b. </label>
-                                <input placeholder="Pilihan b" name="indikator_b" wire:model="indikator_b"
-                                    class="form-control " />
-                            </div>
-                            <div class="form-group py-1 d-flex align-items-center">
-                                <label class="form-label px-2">c. </label>
-                                <input placeholder="Pilihan c" name="indikator_c" wire:model="indikator_c"
-                                    class="form-control " />
-                            </div>
-                            <div class="form-group py-1 d-flex align-items-center">
-                                <label class="form-label px-2">e. </label>
-                                <input placeholder="Pilihan d" name="indikator_d" wire:model="indikator_d"
-                                    class="form-control " />
-                            </div>
-                            <div class="form-group py-1 d-flex align-items-center">
-                                <label class="form-label px-2">e. </label>
-                                <input placeholder="Pilihan e" name="indikator_e" wire:model="indikator_e"
-                                    class="form-control " />
+                            @if ($this->ind_id == null)
+                                <a href="#" class="btn btn-info w-full my-2"
+                                    wire:click='toggleMultiSoal()'>Multi-Soal</a>
+                            @endif
+
+                            <div @if ($indikator_multi) style="opacity: 0.3; pointer-events: none;" @endif>
+                                <div class="form-group mt-2">
+                                    <label class="form-label">Pilihan</label>
+                                </div>
+                                <div class="form-group py-1 d-flex align-items-center">
+                                    <label class="form-label px-2">a. </label>
+                                    <input placeholder="Pilihan a" name="indikator_a" wire:model="indikator_a"
+                                        class="form-control " />
+                                </div>
+                                <div class="form-group py-1 d-flex align-items-center">
+                                    <label class="form-label px-2">b. </label>
+                                    <input placeholder="Pilihan b" name="indikator_b" wire:model="indikator_b"
+                                        class="form-control " />
+                                </div>
+                                <div class="form-group py-1 d-flex align-items-center">
+                                    <label class="form-label px-2">c. </label>
+                                    <input placeholder="Pilihan c" name="indikator_c" wire:model="indikator_c"
+                                        class="form-control " />
+                                </div>
+                                <div class="form-group py-1 d-flex align-items-center">
+                                    <label class="form-label px-2">e. </label>
+                                    <input placeholder="Pilihan d" name="indikator_d" wire:model="indikator_d"
+                                        class="form-control " />
+                                </div>
+                                <div class="form-group py-1 d-flex align-items-center">
+                                    <label class="form-label px-2">e. </label>
+                                    <input placeholder="Pilihan e" name="indikator_e" wire:model="indikator_e"
+                                        class="form-control " />
+                                </div>
                             </div>
                         </div>
                         <div class="form-group py-1 d-flex align-items-center">
@@ -210,11 +290,104 @@
                 @break
 
                 @case('delete-indikator')
-                    delete-indikator
+                    <header class="fs-4 fw-bold text-dark">Konfirmasi Penghapusan Indikator</header>
+                    <section><span class="fw-bold text-dark">Peringatan!</span> dengan menghapus indikator,
+                        maka seluruh
+                        opsi jawaban di dalamnya akan ikut terhapus!</section>
+                    <section class="mt-2">
+                        Apakah Anda yakin ingin menghapus indikator ini?
+                    </section>
+                    <section class="form-group my-2 d-flex gap-2 ">
+                        <button class="btn col-12 shadow btn-primary " wire:click="delete_indikator()">Konfirmasi
+                            Menghapus</button>
+                    </section>
                 @break
 
                 @case('edit-indikator')
-                    edit-indikator
+                    <div class="col"style="min-height: 50vh;">
+                        {{-- Dropdown Aspek --}}
+                        <div class="dropdown mb-3 col">
+                            <button class="btn btn-outline-dark dropdown-toggle col-12" type="button"
+                                data-bs-toggle="dropdown">
+                                {{ $label_edit_aspek ?? 'Pilih Aspek' }}
+                            </button>
+                            <ul class="dropdown-menu col-12 border border-dark shadow">
+                                @foreach (\App\Models\Aspek::where('komponen_id', $komponen_id)->get() as $aspek)
+                                    <li class="col-12 border-bottom border-dark ">
+                                        <button class="dropdown-item col-12 btn btn-dark"
+                                            wire:click="chooseAspekEdit('{{ $aspek->id }}')">
+                                            {{-- Display the aspect number --}}
+                                            {{ $aspek->no }}.
+                                            {{-- Display the aspect name --}}
+                                            {{ $aspek->name }}
+                                        </button>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        <div class="dropdown mb-3 col">
+                            <button @if ($edit_aspek_id == null) @disabled('true') @endif
+                                class="btn btn-outline-dark dropdown-toggle col-12" type="button" data-bs-toggle="dropdown">
+                                {{ $label_edit_sub_aspek ?? 'Pilih Sub-Aspek' }}
+                            </button>
+                            <ul class="dropdown-menu col-12 border border-dark shadow">
+                                <li class="col-12 border-bottom border-dark ">
+                                    <button class="dropdown-item col-12 btn btn-dark" wire:click="chooseSubAspekEdit(null)">
+                                        {{-- Display the aspect number and sub-aspect number --}}
+                                        Tanpa kategori
+                                    </button>
+                                </li>
+                                @foreach (\App\Models\SubAspek::where('aspek_id', $aspek_id)->get()->sortBy('no') as $sub)
+                                    <li class="col-12 border-bottom border-dark ">
+                                        <button class="dropdown-item col-12 btn btn-dark"
+                                            wire:click="chooseSubAspekEdit('{{ $sub->id }}')">
+                                            {{-- Display the aspect number and sub-aspect number --}}
+                                            {{ \App\Models\Aspek::where('id', $aspek_id)->first()->no }}.{{ $sub->no }}.
+                                            {{ $sub->name }}
+                                        </button>
+                                    </li>
+                                @endforeach
+
+                            </ul>
+                        </div>
+
+                        <div class="dropdown mb-3">
+                            <button class="btn btn-outline-dark dropdown-toggle col-12" type="button"
+                                data-bs-toggle="dropdown">
+                                {{ $indikator_nama ?? 'Pilih Indikator' }}
+                            </button>
+                            <ul class="dropdown-menu col-12 border border-dark shadow"
+                                style="max-height: 300px; overflow-y: auto;">
+                                @foreach (\App\Models\Indikator::where(['sub_aspek_id' => $sub_aspek_id, 'multiple' => true])->get() as $indikator)
+                                    @if ($edit_sub_aspek_id != null)
+                                        @if ($indikator->sub_aspek_id == $edit_aspek_id)
+                                            <li class="col-12 border-bottom border-dark">
+                                                <a class="dropdown-item  col-12 btn btn-dark"
+                                                    wire:click="$set('indikator_id', {{ $indikator->id }})">
+                                                    {!! $indikator->content !!}
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @else
+                                        <li class="col-12 border-bottom border-dark">
+                                            <a class="dropdown-item  col-12 btn btn-dark flex-wrap"
+                                                style="white-space: normal;"
+                                                wire:click="$set('indikator_id', {{ $indikator->id }})">
+                                                {!! $indikator->content !!}
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col my-2">
+                        <button class="btn shadow btn-primary col-12" wire:click='confirm_indikator_edit()'>
+                            Konfirmasi Perubahan
+                        </button>
+                    </div>
                 @break
 
                 @default
@@ -222,9 +395,25 @@
             @endswitch
         </section>
         <footer>
-            <button class="btn shadow btn-danger w-100" wire:click='toggleModal("none", true)'>
+            <button class="btn shadow btn-danger w-100"
+                wire:click='toggleModal("none",
+                            true)'>
                 Tutup Form
             </button>
         </footer>
     </x-my-modal>
+    <script>
+        document.addEventListener('trix-initialize', function() {
+            const editor = document.querySelector('trix-editor[input="indikator_konten_input"]');
+            const hiddenInput = document.getElementById('indikator_konten_input');
+
+            editor.addEventListener('trix-change', function() {
+                // Trix already updates hidden input value automatically
+                // Just trigger Livewire to notice the change
+                hiddenInput.dispatchEvent(new Event('input', {
+                    bubbles: true
+                }));
+            });
+        });
+    </script>
 </div>

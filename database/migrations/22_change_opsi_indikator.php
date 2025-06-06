@@ -5,19 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        //
-        Schema::create('OpsiIndikators', function (Blueprint $table) {
-            $table->uuid("id");
-            $table->string('option');
-            $table->string('konten');
-            $table->uuid(column: 'indikator_id');
-            $table->timestamps();
+        Schema::table('indikators', function (Blueprint $table) {
+            $table->dropColumn(['sub']);
+            if (!Schema::hasColumn('OpsiIndikators', 'choosen')) {
+                $table->boolean('choosen')->nullable();
+            }
         });
+
     }
 
     /**

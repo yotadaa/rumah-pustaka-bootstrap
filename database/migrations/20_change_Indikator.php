@@ -17,8 +17,9 @@ return new class extends Migration {
             }
 
             if (!Schema::hasColumn('indikators', 'sub_aspek_id')) {
-                $table->uuid('sub_aspek_id');
+                $table->uuid('sub_aspek_id')->nullable(); // make new migration to change this to nullable
             }
+
         });
     }
 

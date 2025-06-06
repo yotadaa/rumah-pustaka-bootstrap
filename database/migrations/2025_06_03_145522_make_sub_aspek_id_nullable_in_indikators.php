@@ -10,14 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        //
-        Schema::create('OpsiIndikators', function (Blueprint $table) {
-            $table->uuid("id");
-            $table->string('option');
-            $table->string('konten');
-            $table->uuid(column: 'indikator_id');
-            $table->timestamps();
+        Schema::table('indikators', function (Blueprint $table) {
+            // Laravel needs DBAL to do this properly.
+            if (Schema::hasColumn('sub_aspek_id', 'sub_aspek_id')) {
+                $table->uuid('sub_aspek_id')->nullable()->change();
+            }
         });
+
     }
 
     /**
@@ -25,8 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        //
-        Schema::dropIfExists('OpsiIndikators');
-
+        Schema::dropIfExists('indikators');
     }
 };

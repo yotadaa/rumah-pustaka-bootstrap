@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         //
         Schema::create('indikators', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid('id');
             $table->integer('no');
             $table->string('name');
             $table->uuid(column: 'aspek_id');

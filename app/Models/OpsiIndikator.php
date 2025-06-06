@@ -16,5 +16,6 @@ class OpsiIndikator extends Model
         'indikator_id',
         'konten',
         'option',
+        'choosen',
     ];
 }
