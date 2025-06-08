@@ -53,18 +53,21 @@ class Berkas extends Component
             'name' => 'required|string|max:255',
         ]);
 
+        $message = '';
         if ($this->berkasId) {
             $berkas = BerkasModel::find($this->berkasId);
             $berkas->update(['name' => $this->name]);
+            $message = 'Berkas berhasil diperbarui.';
             session()->flash('message', 'Berkas berhasil diperbarui.');
         } else {
             BerkasModel::create(['id' => Str::uuid(), 'name' => $this->name, 'model' => $this->type]);
+            $message = 'Berkas berhasil ditambahkan.';
             session()->flash('message', 'Berkas berhasil ditambahkan.');
         }
         $this->message = session('message');
         $this->resetForm();
         $this->dispatch('close-modal');
-        $this->dispatch('show-toast'); // bisa diganti nama eventnya
+        $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => $message]);
 
     }
 
@@ -93,7 +96,7 @@ class Berkas extends Component
         }
 
         $this->confirmingDelete->delete();
-        session()->flash('message', 'Berkas berhasil dihapus.');
+        $this->dispatch('show-toast', message: ['mode' => 'error', 'message' => "Berkas berhasil dihapus."]);
         $this->confirmingDelete = null;
     }
 

@@ -97,6 +97,7 @@ class Komponen extends Component
         }
 
         $this->confirmingDelete->delete();
+        $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Komponen berhasil dihapus."]);
         session()->flash('message', 'Komponen berhasil dihapus.');
         $this->confirmingDelete = null;
     }
@@ -242,6 +243,7 @@ class Komponen extends Component
             if (!empty($rolesToRemove)) {
                 Access::where('komponen_id', $this->komponenId)->whereIn('role_id', $rolesToRemove)->delete();
             }
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Komponen berhasil diperbarui."]);
         } else {
             $data = [
                 'id' => Str::uuid(),
@@ -257,6 +259,9 @@ class Komponen extends Component
                     'bobot' => $this->formBobot,
                 ]);
             }
+
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Komponen berhasil ditambahkan."]);
+
         }
 
         // dd($this->selectedRoles);

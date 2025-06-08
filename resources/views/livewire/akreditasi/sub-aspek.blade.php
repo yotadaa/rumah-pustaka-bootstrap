@@ -54,11 +54,31 @@
                     <div class="col-5 border-start-0  text-dark fs-4  py-1 ">
                         {{ round($total_skor, 2) }} Poin / 90 Poin ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
                 </div>
+                @php
+                    // Logika yang benar untuk MENGHITUNG Indikator unik yang terjawab
+                    $jumlah_indikator_terjawab = $indikator_option
+                        // 1. Filter koleksi OPSI berdasarkan aspek_id dari relasi indikator
+                        ->where('indikator.aspek_id', $aspek_id)
+
+                        // 2. Ambil hanya objek INDIKATOR dari setiap opsi yang lolos filter
+                        ->pluck('indikator')
+
+                        // 3. Buat koleksi INDIKATOR ini menjadi unik berdasarkan primary key 'id'-nya
+                        ->unique('id');
+                @endphp
+
                 <div class="row px-3 ">
-                    <div class="col-3 py-1  text-dark fs-4 ">Total Skor</div>
-                    <div class="col-5 border-start-0  text-dark fs-4  py-1">
-                        {{ round($total_skor, 2) }} Poin / 90 Poin ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
+                    <div class="col-3 py-1 text-dark fs-4">Indikator terjawab</div>
+                    <div class="col-5 border-start-0 text-dark fs-4 py-1">
+                        {{ $jumlah_indikator_terjawab->count() }}
+                        @foreach ($jumlah_indikator_terjawab as $j)
+                            <div>
+                                {{ $j->no }}
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
+
             </div>
 
             @if (auth()->user()->pangkat == 0)

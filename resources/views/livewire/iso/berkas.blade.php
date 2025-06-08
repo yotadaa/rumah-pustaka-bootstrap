@@ -56,15 +56,6 @@
             </x-modal>
         </div>
 
-        @if (session()->has('message'))
-            <div class="mx-4 mt-2 mb-0 text-center alert alert-success"
-                style="{{ session('message') ? 'display: block;' : 'display: none;' }}">
-                <button type="button" class="btn-close float-end" aria-label="Close"
-                    onclick="this.parentElement.style.display='none';"></button>
-                {{ session('message') }}
-            </div>
-        @endif
-
         <div class="p-4 border-2 ">
             @if ($berkas->count() > 0)
                 <div class="gap-2 list-group">
@@ -141,7 +132,7 @@
                                 "<strong>{{ $confirmingDelete != null
                                     ? $confirmingDelete->name
                                     : "Nama
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Berkas" }}</strong>"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Berkas" }}</strong>"
                                 untuk
                                 mengonfirmasi penghapusan:</p>
                             <input type="text" class="form-control" wire:model="confirmingDeleteText">

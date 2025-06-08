@@ -297,6 +297,7 @@ class SubAspek extends Component
             $opsi->save();
         });
         $current_indikator->save();
+        $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Indikator berhasil diperbarui."]);
 
         $this->toggleModal("none", true);
         $this->is_processing = false;
@@ -334,6 +335,8 @@ class SubAspek extends Component
                 $indikator->save();
             });
         $this->toggleModal('delete-indikator', true);
+
+        $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Indikator berhasil dihapus."]);
     }
 
     public function render()
@@ -362,6 +365,7 @@ class SubAspek extends Component
         if ($this->confirm_delete_sub == $this->delete_sub->name) {
             $this->delete_sub->delete();
             $this->delete_sub = null;
+            $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Sub Aspek berhasil dihapus."]);
             $this->toggleModal('delete-sub-aspek', true);
         }
 
@@ -390,6 +394,7 @@ class SubAspek extends Component
             logger($curr_asp);
             $curr_asp->name = $this->sub_aspek_name;
             $curr_asp->save();
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Sub Aspek berhasil diperbarui."]);
         } else {
             SubAspekModel::create([
                 "name" => $this->sub_aspek_name,
@@ -397,6 +402,7 @@ class SubAspek extends Component
                 "no" => $maxContinuous + 1,
                 "id" => Str::uuid()
             ]);
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Sub Aspek berhasil ditambahkan."]);
         }
 
         $this->sub_aspek_name = "";
@@ -560,6 +566,8 @@ class SubAspek extends Component
         $this->ind_id = null;
         $this->indikator_sub = null;
         $this->indikator_multi = false;
+
+        $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Indikator berhasil ditambahkan."]);
         $this->toggleModal('tambah-indikator', true);
     }
 

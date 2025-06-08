@@ -49,6 +49,7 @@ class Aspek extends Component
         }
 
         $this->sub_del->delete();
+        $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Komponen berhasil dihapus."]);
         session()->flash('message', 'Komponen berhasil dihapus.');
         $this->sub_del = null;
     }
@@ -67,6 +68,7 @@ class Aspek extends Component
             $aspek->save();
         });
         $this->confirmingDelete->delete();
+        $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Komponen berhasil dihapus."]);
         session()->flash('message', 'Komponen berhasil dihapus.');
         $this->confirmingDelete = null;
     }
@@ -109,6 +111,7 @@ class Aspek extends Component
             $curr_asp = SubAspek::findOrFail($this->subaspek_id);
             $curr_asp->name = $this->subAspekName;
             $curr_asp->save();
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Sub Aspek berhasil diperbarui."]);
         } else {
             SubAspek::create([
                 "name" => $this->subAspekName,
@@ -116,6 +119,7 @@ class Aspek extends Component
                 "no" => $maxContinuous + 1,
                 "id" => Str::uuid()
             ]);
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Sub Aspek berhasil ditambahkan."]);
         }
 
         $this->subAspekName = "";
@@ -132,6 +136,7 @@ class Aspek extends Component
             // dd($this->selectedRoles);
             $komponen = AspekModel::findOrFail($this->aspekId);
             $komponen->update(['name' => $this->formName]);
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Aspek berhasil diperbarui."]);
         } else {
             $existingNumbers = AspekModel::where('komponen_id', $this->komponen_id)->orderBy('no')->pluck('no')->toArray();
 
@@ -157,6 +162,7 @@ class Aspek extends Component
 
             // Insert ke database
             AspekModel::create($data);
+            $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Aspek berhasil ditambahkan."]);
         }
 
         // dd($this->selectedRoles);
