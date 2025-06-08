@@ -61,9 +61,11 @@ class Berkas extends Component
             BerkasModel::create(['id' => Str::uuid(), 'name' => $this->name, 'model' => $this->type]);
             session()->flash('message', 'Berkas berhasil ditambahkan.');
         }
-
+        $this->message = session('message');
         $this->resetForm();
         $this->dispatch('close-modal');
+        $this->dispatch('show-toast'); // bisa diganti nama eventnya
+
     }
 
     public function editnama($id)

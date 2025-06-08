@@ -45,3 +45,18 @@ Route::group(["prefix" => "admin", "middleware" => "auth"], function () {
         return redirect('/login');  // Redirect to the login page after logout
     })->name('admin.logout');
 });
+
+
+Route::get('/mail-test', function () {
+    try {
+        \Mail::raw('This is a test email', function ($message) {
+            $message->to('test-no53h303j@srv1.mail-tester.com')
+                ->subject('Test from Laravel');
+        });
+        echo 'Email sent successfully!';
+
+    } catch (\Exception $e) {
+        echo 'Failed to send email: ' . $e->getMessage();
+    }
+
+});

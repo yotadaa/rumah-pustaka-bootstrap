@@ -46,7 +46,20 @@
         <div class="px-4 overflow-auto py-2 d-flex gap-2 flex-column border-bottom border-2">
             <div class="fs-5 fw-bold text-dark">Terdapat {{ count($sub_aspeks) }} Sub Aspek</div>
         </div>
-        <div class="p-4 overflow-auto border-2 d-flex gap-0 flex-column">
+        <div class="p-4 overflow-auto border-2 d-flex gap-0 flex-column row">
+            <div class="my-3 rounded border border-dark col-12 col-md-6">
+                <div class="row px-3">
+                    <div class="col-3 py-1  text-dark fs-4  ">Total
+                        Skor</div>
+                    <div class="col-5 border-start-0  text-dark fs-4  py-1 ">
+                        {{ round($total_skor, 2) }} Poin / 90 Poin ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
+                </div>
+                <div class="row px-3 ">
+                    <div class="col-3 py-1  text-dark fs-4 ">Total Skor</div>
+                    <div class="col-5 border-start-0  text-dark fs-4  py-1">
+                        {{ round($total_skor, 2) }} Poin / 90 Poin ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
+                </div>
+            </div>
 
             @if (auth()->user()->pangkat == 0)
                 <div class="row px-3 gap-2">
@@ -60,6 +73,11 @@
                     </button>
                 </div>
             @endif
+
+
+
+
+
 
             <div style=""
                 class="my-1 bg-light border-dark border overflow-auto rounded fw-bold text-dark w-100 p-0 m-0 d-flex align-items-center justify-content-between ">
@@ -304,7 +322,7 @@
                 @break
 
                 @case('edit-indikator')
-                    <div class="col"style="min-height: 50vh;">
+                    <div class="col"style="max-height: 80vh; oveflow-y: auto;">
                         {{-- Dropdown Aspek --}}
                         <div class="dropdown mb-3 col">
                             <button class="btn btn-outline-dark dropdown-toggle col-12" type="button"
@@ -315,7 +333,8 @@
                                 @foreach (\App\Models\Aspek::where('komponen_id', $komponen_id)->get() as $aspek)
                                     <li class="col-12 border-bottom border-dark ">
                                         <button class="dropdown-item col-12 btn btn-dark"
-                                            wire:click="chooseAspekEdit('{{ $aspek->id }}')">
+                                            wire:click="chooseAspekEdit('{{ $aspek->id }}')"
+                                            style="white-space: normal;overflow-x: hidden; text-overflow: ellipsis;">
                                             {{-- Display the aspect number --}}
                                             {{ $aspek->no }}.
                                             {{-- Display the aspect name --}}
@@ -328,7 +347,8 @@
 
                         <div class="dropdown mb-3 col">
                             <button @if ($edit_aspek_id == null) @disabled('true') @endif
-                                class="btn btn-outline-dark dropdown-toggle col-12" type="button" data-bs-toggle="dropdown">
+                                class="btn btn-outline-dark dropdown-toggle col-12" type="button" data-bs-toggle="dropdown"
+                                style="overflow-x: hidden; text-overflow: ellipsis;">
                                 {{ $label_edit_sub_aspek ?? 'Pilih Sub-Aspek' }}
                             </button>
                             <ul class="dropdown-menu col-12 border border-dark shadow">
@@ -339,10 +359,12 @@
                                     </button>
                                 </li>
                                 @foreach (\App\Models\SubAspek::where('aspek_id', $aspek_id)->get()->sortBy('no') as $sub)
-                                    <li class="col-12 border-bottom border-dark ">
-                                        <button class="dropdown-item col-12 btn btn-dark"
-                                            wire:click="chooseSubAspekEdit('{{ $sub->id }}')">
-                                            {{-- Display the aspect number and sub-aspect number --}}
+                                    <li class="col-12 border-bottom border-dark @if ($sub->id == $edit_sub_aspek_id) text-dark bg-dark @endif"
+                                        style="white-space: normal;overflow-x: hidden; text-overflow: ellipsis;">
+                                        <button
+                                            class="dropdown-item @if ($sub->id == $edit_sub_aspek_id) text-light bg-dark @endif"
+                                            wire:click="chooseSubAspekEdit('{{ $sub->id }}')"
+                                            style="overflow-x: hidden; text-overflow: ellipsis;">
                                             {{ \App\Models\Aspek::where('id', $aspek_id)->first()->no }}.{{ $sub->no }}.
                                             {{ $sub->name }}
                                         </button>
@@ -353,40 +375,82 @@
                         </div>
 
                         <div class="dropdown mb-3">
-                            <button class="btn btn-outline-dark dropdown-toggle col-12" type="button"
-                                data-bs-toggle="dropdown">
-                                {{ $indikator_nama ?? 'Pilih Indikator' }}
+                            <button class="btn btn-outline-dark col-12 d-flex align-items-center gap-2 justify-content-center"
+                                type="button" data-bs-toggle="dropdown">
+                                {!! $label_edit_indikator ?? 'Pilih Indikator' !!} <i class="fas fa-chevron-down"></i>
                             </button>
                             <ul class="dropdown-menu col-12 border border-dark shadow"
                                 style="max-height: 300px; overflow-y: auto;">
-                                @foreach (\App\Models\Indikator::where(['sub_aspek_id' => $sub_aspek_id, 'multiple' => true])->get() as $indikator)
-                                    @if ($edit_sub_aspek_id != null)
-                                        @if ($indikator->sub_aspek_id == $edit_aspek_id)
-                                            <li class="col-12 border-bottom border-dark">
-                                                <a class="dropdown-item  col-12 btn btn-dark"
-                                                    wire:click="$set('indikator_id', {{ $indikator->id }})">
-                                                    {!! $indikator->content !!}
-                                                </a>
-                                            </li>
-                                        @endif
-                                    @else
-                                        <li class="col-12 border-bottom border-dark">
-                                            <a class="dropdown-item  col-12 btn btn-dark flex-wrap"
-                                                style="white-space: normal;"
-                                                wire:click="$set('indikator_id', {{ $indikator->id }})">
-                                                {!! $indikator->content !!}
-                                            </a>
-                                        </li>
-                                    @endif
+                                <li class="col-12 border-bottom border-dark">
+                                    <a class="dropdown-item  col-12 btn btn-dark flex-wrap" style="white-space: normal;"
+                                        wire:click="chooseIndikatorEdit(null)">
+                                        Tanpa Sub-Indikator
+
+                                    </a>
+                                </li>
+                                @foreach (\App\Models\Indikator::where(['aspek_id' => $aspek_id, 'multiple' => true])->get() as $indikator)
+                                    <li class="col-12 border-bottom border-dark">
+                                        <a class="dropdown-item  col-12 btn btn-dark flex-wrap" style="white-space: normal;"
+                                            wire:click="chooseIndikatorEdit('{{ $indikator->id }}')">
+                                            {!! \Illuminate\Support\Str::words($indikator->content, 5, '...') !!}
+
+                                        </a>
+                                    </li>
                                 @endforeach
                             </ul>
                         </div>
-                    </div>
+                        <div class="overflow-y-auto" style="max-height: 300px;">
+                            <div class="form-group">
+                                <label class="form-label">Konten Indikator</label>
 
-                    <div class="col my-2">
-                        <button class="btn shadow btn-primary col-12" wire:click='confirm_indikator_edit()'>
-                            Konfirmasi Perubahan
-                        </button>
+                                <div>
+                                    <input id="indikator_konten_input" type="hidden"
+                                        wire:model.defer="edit_indikator_content" value="{{ $edit_indikator_content }}">
+                                    <trix-editor input="indikator_konten_input" class="overflow-y-auto"
+                                        style="max-height: 300px;" placeholder="Konten Indikator"></trix-editor>
+                                </div>
+                            </div>
+                            {{-- @if (\App\Models\Indikator::findOrFail($ind_id)->multiple) --}}
+                            <div class="form-group my-2">
+                                <div @if (\App\Models\Indikator::findOrFail($ind_id)->multiple) style="opacity: 0.3; pointer-events: none;" @endif>
+                                    <div class="form-group ">
+                                        <label class="form-label">Pilihan</label>
+                                    </div>
+                                    <div class="form-group py-1 d-flex align-items-center">
+                                        <label class="form-label px-2">a. </label>
+                                        <input placeholder="Pilihan a" name="indikator_a" wire:model="indikator_a"
+                                            class="form-control " />
+                                    </div>
+                                    <div class="form-group py-1 d-flex align-items-center">
+                                        <label class="form-label px-2">b. </label>
+                                        <input placeholder="Pilihan b" name="indikator_b" wire:model="indikator_b"
+                                            class="form-control " />
+                                    </div>
+                                    <div class="form-group py-1 d-flex align-items-center">
+                                        <label class="form-label px-2">c. </label>
+                                        <input placeholder="Pilihan c" name="indikator_c" wire:model="indikator_c"
+                                            class="form-control " />
+                                    </div>
+                                    <div class="form-group py-1 d-flex align-items-center">
+                                        <label class="form-label px-2">e. </label>
+                                        <input placeholder="Pilihan d" name="indikator_d" wire:model="indikator_d"
+                                            class="form-control " />
+                                    </div>
+                                    <div class="form-group py-1 d-flex align-items-center">
+                                        <label class="form-label px-2">e. </label>
+                                        <input placeholder="Pilihan e" name="indikator_e" wire:model="indikator_e"
+                                            class="form-control " />
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- @endif --}}
+
+                        </div>
+                        <div class="col my-2">
+                            <button class="btn shadow btn-primary col-12" wire:click='confirm_indikator_edit()'>
+                                Konfirmasi Perubahan
+                            </button>
+                        </div>
                     </div>
                 @break
 
@@ -416,4 +480,10 @@
             });
         });
     </script>
+    <script>
+        window.addEventListener('refresh-page', () => {
+            window.location.reload();
+        });
+    </script>
+
 </div>

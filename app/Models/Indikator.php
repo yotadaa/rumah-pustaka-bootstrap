@@ -36,4 +36,10 @@ class Indikator extends Model
         'multiple',
         'no',
     ];
+
+    public function aspek()
+    {
+        return $this->belongsTo(Aspek::class, 'aspek_id');
+    }
+
 }

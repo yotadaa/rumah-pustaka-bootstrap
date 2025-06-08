@@ -10,12 +10,14 @@
                         {!! $ind->content !!}
                     </div>
                     <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2">
-                        @foreach (\App\Models\OpsiIndikator::where('indikator_id', $ind->id)->get() as $opsi)
+                        @foreach ($indikator_option->where('indikator_id', $ind->id) as $opsi)
                             <label
                                 class="p-2 rounded-2 border-dark border-1 shadow btn btn-light text-start position-relative d-flex align-items-center gap-2">
                                 <input type="radio" name="jawaban_opsi_{{ $ind->id }}" value="{{ $opsi->id }}"
+                                    @if ($opsi->choosen) checked @endif
                                     style="outline: 0; transition: all ease-in-out 0.2s;"
-                                    class="form-check-input m-0 border-1 border-primary outline-0" />
+                                    class="form-check-input m-0 border-1 border-primary outline-0"
+                                    wire:click='setScore("{{ $opsi->id }}")' />
                                 <span>{{ $opsi->konten }}</span>
                             </label>
                         @endforeach
@@ -23,7 +25,7 @@
                     <div class="col-12 col-md-2 d-flex flex-column gap-1 justify-content-start align-items-center py-2">
                         @if (auth()->user()->pangkat == 0)
                             <div class=" d-flex gap-2 justify-content-center h-fit">
-                                <button
+                                <button wire:click='move_indikator("{{ $ind->id }}", -1)'
                                     class="btn btn-dark shadow col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                     <i class="fas fa-chevron-up"></i>
                                 </button>
@@ -31,7 +33,7 @@
                                     class="btn btn-light border border-dark py-1 shadow col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                     {{ $ind->no }}
                                 </div>
-                                <button
+                                <button wire:click='move_indikator("{{ $ind->id }}", 1)'
                                     class="btn btn-dark col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
@@ -53,7 +55,7 @@
                 </div>
             </div>
         @else
-            <div class="container border border-dark rounded rounded-top-3  px-0 m-0 p-0 " style=";">
+            <div class="container border border-dark rounded rounded-top-3  px-0 m-0 p-0 my-3" style=";">
                 <header class="bg-dark w-100 rounded-top-2 py-1 text-light px-5 mx-0 d-flex fw-bold fs-4">
                     {{ $ind->no }}.&nbsp;&nbsp;&nbsp;&nbsp; {!! $ind->content !!}
                 </header>
@@ -61,7 +63,7 @@
                 <div class=" d-flex flex-row gap-1  p-2 align-items-center ">
                     @if (auth()->user()->pangkat == 0)
                         <div class=" d-flex gap-2 justify-content-center h-fit px-2">
-                            <button
+                            <button wire:click='move_indikator("{{ $ind->id }}", -1)'
                                 class="btn btn-dark shadow col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                 <i class="fas fa-chevron-up"></i>
                             </button>
@@ -69,7 +71,7 @@
                                 class="btn btn-light border border-dark py-1 shadow col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                 {{ $ind->no }}
                             </div>
-                            <button
+                            <button wire:click='move_indikator("{{ $ind->id }}", 1)'
                                 class="btn btn-dark col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                 <i class="fas fa-chevron-down"></i>
                             </button>
@@ -80,7 +82,8 @@
                         </button>
                     @endif
                     @if (auth()->user()->pangkat == 0)
-                        <button class="btn btn w-fit btn-info">
+                        <button class="btn btn w-fit btn-info"
+                            wire:click='toggleModal("edit-indikator", false, "edit-indikator", null, "{{ $ind->id }}")'>
                             <i class="fas fa-pen"></i> Edit indikator &nbsp;&nbsp;&nbsp;&nbsp;
                         </button>
                     @endif
@@ -101,20 +104,21 @@
 
                         <!-- Kolom 3 (1/4) -->
                         <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2 ">
-                            @foreach (\App\Models\OpsiIndikator::where('indikator_id', $sub_ind->id)->get() as $opsi)
+                            @foreach ($indikator_option->where('indikator_id', $sub_ind->id) as $opsi)
                                 <label wire:key="sub-indikator-{{ $ind->id }}"
                                     class="p-2 rounded-2 shadow border-1 border-dark btn btn-light text-start position-relative d-flex align-items-center gap-2">
                                     <input type="radio" name="jawaban_opsi_{{ $ind->id }}"
-                                        value="{{ $opsi->id }}"
-                                        class="form-check-input m-0 border-1 border-primary outline-0" />
-                                    <span>{{ $opsi->konten }}</span>
+                                        value="{{ $opsi->id }}" @if ($opsi->choosen) checked @endif
+                                        class="form-check-input m-0 border-1 border-primary outline-0"
+                                        wire:click='setScore("{{ $opsi->id }}")' />
+                                    <span>{{ $opsi->id }} {{ $opsi->konten }}</span>
                                 </label>
                             @endforeach
                         </div>
                         <div class="col-12 col-md-3 d-flex flex-column gap-1  py-2 align-items-center ">
                             @if (auth()->user()->pangkat == 0)
                                 <div class=" d-flex gap-2 justify-content-center h-fit">
-                                    <button
+                                    <button wire:click='move_indikator("{{ $sub_ind->id }}", -1)'
                                         class="btn btn-dark shadow col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                         <i class="fas fa-chevron-up"></i>
                                     </button>
@@ -122,14 +126,15 @@
                                         class="btn btn-light border border-dark py-1 shadow col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                         0
                                     </div>
-                                    <button
+                                    <button wire:click='move_indikator("{{ $sub_ind->id }}", 1)'
                                         class="btn btn-dark col-4 d-flex h-fit justify-content-center align-items-center btn-primary">
                                         <i class="fas fa-chevron-down"></i>
                                     </button>
                                 </div>
                             @endif
                             @if (auth()->user()->pangkat == 0)
-                                <button class="btn btn w-fit btn-info">
+                                <button class="btn btn w-fit btn-info"
+                                    wire:click='toggleModal("edit-indikator", false, "edit-indikator", null, "{{ $sub_ind->id }}")'>
                                     <i class="fas fa-pen"></i> Edit indikator &nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
                             @endif

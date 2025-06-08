@@ -13,6 +13,17 @@ class Aspek extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id','komponen_id','berkas_id','name','no'
+        'id',
+        'komponen_id',
+        'berkas_id',
+        'name',
+        'no'
     ];
+
+    public function komponen()
+    {
+        return $this->belongsTo(Komponen::class, 'komponen_id');
+    }
+
+
 }

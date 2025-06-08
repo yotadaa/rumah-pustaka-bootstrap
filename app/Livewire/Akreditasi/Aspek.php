@@ -59,6 +59,13 @@ class Aspek extends Component
             return;
         }
 
+        $all_aspek = AspekModel::where([
+            'komponen_id' => $this->komponen_id,
+            'berkas_id' => $this->berkas_id
+        ])->where('no', '>', $this->confirmingDelete->no)->get()->each(function ($aspek) {
+            $aspek->no = $aspek->no - 1;
+            $aspek->save();
+        });
         $this->confirmingDelete->delete();
         session()->flash('message', 'Komponen berhasil dihapus.');
         $this->confirmingDelete = null;
@@ -126,7 +133,7 @@ class Aspek extends Component
             $komponen = AspekModel::findOrFail($this->aspekId);
             $komponen->update(['name' => $this->formName]);
         } else {
-            $existingNumbers = AspekModel::orderBy('no')->pluck('no')->toArray();
+            $existingNumbers = AspekModel::where('komponen_id', $this->komponen_id)->orderBy('no')->pluck('no')->toArray();
 
             // Cari nomor terbesar tanpa terputus
             $maxContinuous = 0;

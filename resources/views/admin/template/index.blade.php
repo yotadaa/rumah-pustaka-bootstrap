@@ -99,7 +99,6 @@
 <body>
 
 
-
     <div id="modal"
         class="top-0 left-0 w-full h-full d-none align-items-center justify-content-start position-fixed"
         style="overflow-x: auto; padding: 0 10%;z-index: 999; background-color: rgba(0,0,0,.2)">
@@ -206,6 +205,8 @@
             // modalImg.src = src[0];
         }
     </script>
+
+    <livewire:component.notification />
     @livewireScripts
 </body>
 

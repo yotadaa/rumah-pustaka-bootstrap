@@ -18,4 +18,10 @@ class OpsiIndikator extends Model
         'option',
         'choosen',
     ];
+
+    public function indikator()
+    {
+        return $this->belongsTo(Indikator::class, 'indikator_id');
+    }
+
 }
