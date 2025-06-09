@@ -129,8 +129,11 @@
             @include('admin.template.footer')
         </div>
     </div>
+    <!-- Include ApexCharts via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    @stack('scritps')
+    <!-- This will render the scripts pushed from our component's view -->
+    @stack('scripts')
     <script src="{{ asset('modernize/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('modernize/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
 
@@ -208,6 +211,7 @@
 
     <livewire:component.notification />
     @livewireScripts
+
 </body>
 
 </html>

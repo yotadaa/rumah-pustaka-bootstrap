@@ -47,35 +47,48 @@
             <div class="fs-5 fw-bold text-dark">Terdapat {{ count($sub_aspeks) }} Sub Aspek</div>
         </div>
         <div class="p-4 overflow-auto border-2 d-flex gap-0 flex-column row">
+            <x-radial-chart data="{{ $total_skor }}" />
             <div class="my-3 rounded border border-dark col-12 col-md-6">
-                <div class="row px-3">
-                    <div class="col-3 py-1  text-dark fs-4  ">Total
+                <div class="row px-1  border-bottom border-dark">
+                    <div class="col-3 py-1  text-dark fs-4  border-end border-dark ">Total
                         Skor</div>
                     <div class="col-5 border-start-0  text-dark fs-4  py-1 ">
-                        {{ round($total_skor, 2) }} Poin / 90 Poin ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
+                        {{ round($total_skor, 2) }} Poin /
+                        {{ \App\Models\Komponen::findOrFail($komponen_id)->skor }}
+                        Poin
+                        ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
                 </div>
                 @php
                     // Logika yang benar untuk MENGHITUNG Indikator unik yang terjawab
                     $jumlah_indikator_terjawab = $indikator_option
                         // 1. Filter koleksi OPSI berdasarkan aspek_id dari relasi indikator
+                        ->where('choosen', true)
                         ->where('indikator.aspek_id', $aspek_id)
 
                         // 2. Ambil hanya objek INDIKATOR dari setiap opsi yang lolos filter
                         ->pluck('indikator')
 
                         // 3. Buat koleksi INDIKATOR ini menjadi unik berdasarkan primary key 'id'-nya
-                        ->unique('id');
+                        ->unique('id')
+                        ->filter(function ($i) {
+                            if ($i->sub_id == null) {
+                                return true;
+                            } else {
+                                try {
+                                    $parent = \App\Models\Indikator::findOrFail($i->sub_id);
+                                    return true;
+                                } catch (\Exception $e) {
+                                    return false;
+                                }
+                            }
+                        });
                 @endphp
 
-                <div class="row px-3 ">
-                    <div class="col-3 py-1 text-dark fs-4">Indikator terjawab</div>
+                <div class="row px-1  ">
+                    <div class="col-3 py-1 text-dark fs-4 border-end border-dark">Indikator terjawab</div>
                     <div class="col-5 border-start-0 text-dark fs-4 py-1">
-                        {{ $jumlah_indikator_terjawab->count() }}
-                        @foreach ($jumlah_indikator_terjawab as $j)
-                            <div>
-                                {{ $j->no }}
-                            </div>
-                        @endforeach
+                        {{ $jumlah_indikator_terjawab->count() }} /
+                        {{ $indikator->where('aspek_id', $aspek_id)->count() }}
                     </div>
                 </div>
 
@@ -125,18 +138,21 @@
             @foreach ($sub_aspeks as $sub)
                 @php $sub_loop = $loop; @endphp
 
-                <div style=""
-                    class="my-1 bg-light border-dark border overflow-auto rounded fw-bold text-dark w-100 p-0 m-0 d-flex align-items-center justify-content-between ">
-                    <div class="d-flex align-items-center gap-0 p-0 ">
-                        <div class="cursor-pointer btn btn-sm btn-dark rounded-0 p-1"
+                <div
+                    class="my-1 bg-light border-dark border overflow-auto overflow-hidden rounded fw-bold text-dark w-100 p-0 m-0 d-flex align-items-center justify-content-between ">
+                    <div class="d-flex align-items-center gap-0 p-0 h-100">
+                        <div class="cursor-pointer btn btn-sm btn-dark rounded-0 p-1 h-100"
                             @if ($loop->index != 0) wire:click="changeDirection('{{ $sub->id }}', 1)" @endif>
-                            <i class="px-2 fas fa-chevron-up @if ($loop->index == 0) text-dark @endif"></i>
+                            <i
+                                class="px-2 fas fa-chevron-up h-100 @if ($loop->index == 0) text-dark @endif"></i>
                         </div>
                         <div class="cursor-pointer btn btn-sm btn-dark rounded-0 p-1 "
                             @if ($loop->index != count($sub_aspeks) - 1) wire:click="changeDirection('{{ $sub->id }}', -1)" @endif>
                             <i class="px-1 fas fa-chevron-down @if ($loop->index == count($sub_aspeks) - 1) text-dark @endif "></i>
                         </div>
-                        <div class="px-2"> {{ $aspek->no }}.{{ $sub->no }}. {{ $sub->name }}</div>
+                        <div class="px-2" style="">
+                            {{ $aspek->no }}.{{ $sub->no }}.
+                            {{ $sub->name }}</div>
                     </div>
                     <div class="d-flex gap-1" style="flex-wrap: nowrap;white-space: nowrap;">
 
@@ -146,14 +162,10 @@
                                 class="btn btn-sm btn-dark border-light" wire:ignore>
                                 <i class="fas fa-plus"></i> <span class="d-md-inline d-none">Tambah Indikator</span>
                             </button>
-                        @endif
-                        @if (auth()->user()->pangkat == 0)
                             <button class="btn btn-sm btn-secondary  "
                                 wire:click='toggleModal("tambah-sub-aspek", false, "edit","{{ $sub->id }}")'>
                                 <i class="fas fa-pen"></i>
                             </button>
-                        @endif
-                        @if (auth()->user()->pangkat == 0)
                             <button class="btn btn-sm btn-danger "
                                 wire:click='toggleModal("delete-sub-aspek", false, "del","{{ $sub->id }}")'>
                                 <i class="fas fa-trash"></i>

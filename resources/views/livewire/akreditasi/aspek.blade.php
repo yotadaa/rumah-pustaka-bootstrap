@@ -245,16 +245,16 @@
                                                     <li
                                                         class="py-1 px-1 border-bottom border-dark d-flex justify-content-between align-items-center">
                                                         {{ $sub->name }}
-                                                        <div>
+                                                        <div class="btn-group">
                                                             @if (auth()->user()->pangkat == 0)
-                                                                <a class="btn btn-sm btn-secondary"
+                                                                <a class="btn btn-sm shadow btn-secondary"
                                                                     data-bs-toggle="modal" data-bs-target="#subAspek"
                                                                     wire:click="editSubAspek('{{ $sub->id }}')">
                                                                     <i class="fas fa-pen"></i>
                                                                 </a>
                                                             @endif
                                                             @if (auth()->user()->pangkat == 0)
-                                                                <button class="btn btn-sm btn-danger"
+                                                                <button class="btn btn-sm shadow btn-danger"
                                                                     wire:click="sub_delete('{{ $sub->id }}')">
                                                                     <i class="fas fa-trash"></i>
                                                                 </button>
