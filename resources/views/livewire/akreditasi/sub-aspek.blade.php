@@ -1,4 +1,7 @@
 <div>
+    @if ($document_id != null)
+        @livewire('admin.document', ['document_id' => $document_id])
+    @endif
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-2" style="flex-wrap: wrap; overflow-x: auto;">
             <li class="breadcrumb-item">
@@ -21,6 +24,7 @@
     </nav>
 
     <div class="border card">
+
         <div class="card-body">
             <div class="mb-0 d-flex justify-content-between align-items-center">
                 <div><a href="{{ route('admin.akreditasi.aspek', ['berkas_id' => $berkas_id, 'komponen_id' => $komponen_id]) }}"
@@ -46,17 +50,21 @@
         <div class="px-4 overflow-auto py-2 d-flex gap-2 flex-column border-bottom border-2">
             <div class="fs-5 fw-bold text-dark">Terdapat {{ count($sub_aspeks) }} Sub Aspek</div>
         </div>
-        <div class="p-4 overflow-auto border-2 d-flex gap-0 flex-column row">
-            <x-radial-chart data="{{ $total_skor }}" />
-            <div class="my-3 rounded border border-dark col-12 col-md-6">
-                <div class="row px-1  border-bottom border-dark">
-                    <div class="col-3 py-1  text-dark fs-4  border-end border-dark ">Total
-                        Skor</div>
+
+        <div class="p-4 overflow-auto border-2 d-flex gap-0 row">
+            <div class="col-6 col-md-3"><x-radial-chart
+                    data="{{ round(($total_skor / \App\Models\Komponen::findOrFail($komponen_id)->skor) * 100, 2) }}"
+                    id="totalScoreChart" />
+            </div>
+            <div class="my-3 rounded border border-dark col-12 col-md-7">
+                <div class="row px-1 ">
+                    <div class="col-3 py-1  text-dark fs-4">Total Skor</div>
                     <div class="col-5 border-start-0  text-dark fs-4  py-1 ">
                         {{ round($total_skor, 2) }} Poin /
                         {{ \App\Models\Komponen::findOrFail($komponen_id)->skor }}
                         Poin
-                        ({{ round(($total_skor / 90) * 100, 2) }}%)</div>
+                        ({{ round(($total_skor / \App\Models\Komponen::findOrFail($komponen_id)->skor) * 100, 2) }}%)
+                    </div>
                 </div>
                 @php
                     // Logika yang benar untuk MENGHITUNG Indikator unik yang terjawab
@@ -84,22 +92,53 @@
                         });
                 @endphp
 
-                <div class="row px-1  ">
-                    <div class="col-3 py-1 text-dark fs-4 border-end border-dark">Indikator terjawab</div>
+                <div class="row px-1 bg-light ">
+                    <div class="col-3 py-1 text-dark fs-4 ">Indikator terjawab</div>
                     <div class="col-5 border-start-0 text-dark fs-4 py-1">
                         {{ $jumlah_indikator_terjawab->count() }} /
-                        {{ $indikator->where('aspek_id', $aspek_id)->count() }}
+                        {{ $indikator->where('aspek_id', $aspek_id)->where('multiple', false)->count() }}
                     </div>
                 </div>
 
             </div>
 
+
+
+
             @if (auth()->user()->pangkat == 0)
                 <div class="row px-3 gap-2">
-                    <button class="gap-2 col-12 col-md-2 btn btn-primary " wire:click='toggleModal("tambah-sub-aspek")'>
+                    {{-- Dropdown untuk memilih Aspek --}}
+                    <div class="col-12 col-md-3">
+                        <div class="dropdown">
+                            <button
+                                class="btn btn-outline-dark d-flex justify-content-between align-items-center dropdown-toggle w-100"
+                                type="button" id="aspekDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                style="white-space: normal;">
+                                {{-- This will show the name of the selected aspect, or 'Pilih Aspek' by default --}}
+                                {{ $selectedAspekName ?? 'Pilih Aspek' }}
+                            </button>
+                            <ul class="dropdown-menu w-100 border border-dark" aria-labelledby="aspekDropdown">
+                                {{-- Loop through the $this->aspek collection --}}
+                                @foreach ($all_aspek as $aspek_item)
+                                    <li class="border-bottom border-dark">
+                                        {{-- When an item is clicked, it calls the 'pilihAspek' method in your Livewire component --}}
+                                        <button class="dropdown-item" wire:click="pilihAspek('{{ $aspek_item->id }}')"
+                                            style="white-space: normal;">
+                                            {{ $aspek_item->no }}. {{ $aspek_item->name }}
+                                        </button>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+
+                    {{-- Tombol Tambah Sub-Aspek --}}
+                    <button class="gap-2 col-12 col-md-2 btn btn-primary" wire:click='toggleModal("tambah-sub-aspek")'>
                         <i class="fa fa-plus"></i>
                         <span>Tambah Sub-Aspek</span>
                     </button>
+
+                    {{-- Tombol Tambah Indikator --}}
                     <button wire:click='toggleModal("tambah-indikator", false, "tambah-indikator", null)'
                         class="btn col-12 col-md-2 btn-sm btn-light border-dark fs-3" wire:ignore>
                         <i class="fas fa-plus"></i> <span class="d-md-inline d-none">Tambah Indikator</span>

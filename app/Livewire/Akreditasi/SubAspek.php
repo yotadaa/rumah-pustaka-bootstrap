@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Akreditasi;
 
+use App\Models\Komponen;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use App\Models\Aspek as AspekModel;
@@ -15,12 +16,17 @@ class SubAspek extends Component
 {
 
 
+    public $document_id;
+
     public $is_processing = false;
 
-    public $indikator_id, $aspek_id, $komponen_id, $berkas_id, $aspek;
+    public $indikator_id, $aspek_id, $komponen_id, $berkas_id, $aspek, $all_aspek;
     public $showForm = false;
     public $formName;
     public $modal;
+    public $selectedAspekId;
+    public $selectedAspekName;
+
 
     public $total_skor = 0;
 
@@ -37,12 +43,53 @@ class SubAspek extends Component
 
     public function mount($aspek_id, $komponen_id, $berkas_id)
     {
+        $this->aspek = AspekModel::findOrFail($this->aspek_id);
+        $this->all_aspek = AspekModel::where('komponen_id', $komponen_id)->orderBy('no')->get();
+        // dd($this->all_aspek);
         $this->aspek_id = $aspek_id;
         $this->komponen_id = $komponen_id;
         $this->berkas_id = $berkas_id;
+        $this->indikator = Indikator::where("aspek_id", $this->aspek_id)
+            ->orderBy('no')
+            ->get();
+        $this->pilihAspek($aspek_id);
         $this->update_score();
-
     }
+
+    public function toggleShowDocument($id)
+    {
+        // $this->document_id = null;
+        if ($this->document_id != null) {
+
+            $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Mohon klik sekali lagi."]);
+            $this->document_id = null;
+        } else {
+            $this->document_id = $id;
+        }
+        // $this->document_id = null;
+    }
+
+
+    public function pilihAspek($id)
+    {
+        // dd($id);
+        $this->selectedAspekId = $id;
+        $selected = $this->all_aspek->where('id', $id);
+        $this->selectedAspekName = $selected ? $selected->last()->no . ". " . $selected->last()->name : null;
+        if ($this->aspek_id != $id) {
+            return redirect()->route('admin.akreditasi.sub-aspek', [
+                'berkas_id' => $this->berkas_id,
+                'komponen_id' => $this->komponen_id,
+                'aspek_id' => $id
+            ]);
+        }
+
+        // You can now emit an event or call another method to update
+        // other parts of your page based on the selected aspect.
+        // For example:
+        // $this->emit('aspekSelected', $this->selectedAspekId);
+    }
+
 
     public function update_score()
     {
@@ -52,8 +99,12 @@ class SubAspek extends Component
         });
         // dd($get_score->sum('score'));
         if (count($get_score) != 0) {
-            $this->total_skor = $get_score->sum('score') / count($get_score);
+            $this->total_skor = $get_score->sum('score') / $this->indikator->where('multiple', false)->count();
         }
+        // dd($this->indikator->where('multiple', false)->count());
+
+
+        $this->dispatch('update-chart-totalScoreChart', ['data' => round(($this->total_skor / \App\Models\Komponen::findOrFail($this->komponen_id)->skor) * 100, 2)]);
     }
 
     public function toggleModal($modal_key, $close = false, $condition = "normal", $id = null, $ind_id = null)
@@ -315,6 +366,12 @@ class SubAspek extends Component
         $option->each(function ($opsi) {
             $opsi->save();
         });
+
+        if ($current_indikator->aspek_id != $this->edit_aspek_id) {
+            $current_indikator->sub_aspek_id = null;
+            $current_indikator->sub_id = null;
+        }
+        $current_indikator->aspek_id = $this->edit_aspek_id;
         $current_indikator->save();
         $this->dispatch('show-toast', message: ['mode' => 'primary', 'message' => "Indikator berhasil diperbarui."]);
 
@@ -461,6 +518,24 @@ class SubAspek extends Component
         ])->max('no');
 
 
+        $current_aspek = AspekModel::findOrFail($this->aspek_id);
+        $komponen = Komponen::findOrFail($this->komponen_id);
+        $all_aspek = AspekModel::where('komponen_id', $this->komponen_id)->orderBy('no')->get();
+
+        $initial_number = Indikator::where('sub_id', null)->where('aspek_id', operator: $all_aspek[0]->id)->get()->max('no');
+        foreach ($all_aspek as $aspek) {
+            $c_i = Indikator::where('sub_id', null)->where('aspek_id', operator: $aspek->id)->get()->max('no');
+            if ($c_i > $initial_number) {
+                $initial_number = $c_i;
+            }
+
+        }
+
+        $maxContinuous = $initial_number;
+
+
+
+
 
         // dd([$maxContinuous, $this->aspek_id]);
 
@@ -598,10 +673,6 @@ class SubAspek extends Component
 
         $nilai = strtolower($option->option); // pastikan lowercase
         $angka = $mapping[$nilai] ?? null; // null jika tidak cocok
-
-        // dd("test");
-        // hubungkan OpsiIndikator ke Komponen
-        // OpsiIndikator->indikator_id, Indikator->aspek_id, Aspek->komponen_id
         $indikator = $option->indikator; // relasi indikator di model OpsiIndikator
 
         $all_options = OpsiIndikator::where('indikator_id', $indikator->id)->get()
@@ -622,6 +693,7 @@ class SubAspek extends Component
         // Ambil komponen dari aspek
         $komponen = $aspek ? $aspek->komponen : null; // relasi komponen di model Aspek
         $score = ($komponen->skor / 5) * $angka;
+        // dd($angka);
         $option->score = $score;
         $option->choosen = true;
         $option->save();

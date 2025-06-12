@@ -179,18 +179,38 @@
         </div>
 
         <div class="p-4 overflow-auto border-2">
-            <div class="p-3">
-                <div class="row fs-4 text-dark">
-                    <ul class="col-2">
-                        <li>Aspek Komponen</li>
-                        <li>Skor Maksimum</li>
-                        <li>Bobot</li>
-                    </ul>
-                    <ul class="col-2">
-                        <li>: {{ App\Models\Komponen::findOrFail($komponen_id)->name }}</li>
-                        <li>: {{ App\Models\Komponen::findOrFail($komponen_id)->skor }}</li>
-                        <li>: {{ App\Models\Komponen::findOrFail($komponen_id)->bobot }}</li>
-                    </ul>
+            <div class="p-3 row">
+                @php
+                    // It's more efficient to find the component once and store it in a variable.
+                    $komponen = App\Models\Komponen::findOrFail($komponen_id);
+                @endphp
+
+                <div class="table-responsive rounded overflow-hidden col-12 col-md-5">
+                    {{-- The 'table-sm' class is added here to reduce padding --}}
+                    <table class="table table-bordered border-dark table-sm fs-4 text-dark mb-0">
+                        <tbody>
+                            <tr>
+                                <td style="width: 35%;">Aspek Komponen</td>
+                                <td>{{ $komponen->name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Skor Maksimum</td>
+                                <td>{{ $komponen->skor }}</td>
+                            </tr>
+                            <tr>
+                                <td>Bobot</td>
+                                <td>{{ $komponen->bobot }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total Skor</td>
+                                <td>{{ $total_score }}</td>
+                            </tr>
+                            <tr>
+                                <td>Indikator terisi</td>
+                                <td>{{ $filled_indikator->count() }}/{{ $indikator->count() }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>

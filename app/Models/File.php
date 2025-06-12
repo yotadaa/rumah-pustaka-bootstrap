@@ -8,6 +8,13 @@ class File extends Model
 {
     //
     protected $fillable = [
-        'path', 'folder', 'filename', 'komponen_id', 'berkas_id', 'role_id'
+        'path',
+        'folder',
+        'filename',
+        'komponen_id',
+        'berkas_id',
+        'role_id',
+        'indikator_id',
+        'score'
     ];
 }

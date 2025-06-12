@@ -3,6 +3,8 @@
 namespace App\Livewire\Akreditasi;
 
 use App\Models\Berkas;
+use App\Models\Indikator;
+use App\Models\OpsiIndikator;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use App\Models\Aspek as AspekModel;
@@ -14,12 +16,18 @@ class Aspek extends Component
 
     public $berkas_id, $komponen_id, $aspek, $formName, $aspekId, $subAspekName, $clickedAspek, $showingAspek, $subaspek_id, $sub_del;
     public $showForm = false;
+    public $indikator, $filled_indikator;
     public $confirmingDelete = null;
     public $confirmingDeleteText;
+    public $total_score;
 
 
     public function mount($berkas_id, $komponen_id)
     {
+        $all_aspek = AspekModel::where('komponen_id', $this->komponen_id)->pluck('id');
+        $this->indikator = Indikator::where('multiple', 0)->whereIn('aspek_id', $all_aspek)->get();
+        $this->indikator_ids = $this->indikator->pluck('id');
+        $this->filled_indikator = OpsiIndikator::whereIn('indikator_id', $this->indikator_ids)->where('choosen', true)->get();
         $this->berkas_id = $berkas_id;
         $this->komponen_id = $komponen_id;
 
@@ -225,12 +233,18 @@ class Aspek extends Component
     }
     public function render()
     {
+        $all_aspek = AspekModel::where('komponen_id', $this->komponen_id)->pluck('id');
+        $all_indikator = Indikator::whereIn('aspek_id', $all_aspek)->pluck('id');
+        $opsi_indikator = OpsiIndikator::whereIn('indikator_id', $all_indikator)->where('choosen', true)->get();
+        $this->indikator = Indikator::where('multiple', 0)->whereIn('aspek_id', $all_aspek)->get();
+        $num_indicator = Indikator::where('multiple', 0)->whereIn('aspek_id', $all_aspek)->count();
+        $this->total_score = $opsi_indikator->sum('score') / $num_indicator;
 
         // check first if App/Models/Berkas with berkas_id and App/Models/Komponen with komponen_id is exists, if not go to route('admin.akreditasi')
         $this->aspek = AspekModel::where(
             [
                 'komponen_id' => $this->komponen_id,
-                'berkas_id' => $this->berkas_id
+                // 'berkas_id' => $this->berkas_id
             ]
         )->get()->sortBy('no');
         return view('livewire.akreditasi.aspek');

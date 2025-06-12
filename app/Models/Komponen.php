@@ -28,12 +28,19 @@ class Komponen extends Model
         });
     }
 
+    public function aspek()
+    {
+        return $this->hasMany(Aspek::class, 'komponen_id', 'id');
+    }
+
+
     public function access()
     {
         return $this->hasMany(Access::class, 'komponen_id', 'id');
     }
 
-    public function files($berkasId) {
+    public function files($berkasId)
+    {
         return $this->hasMany(File::class, 'komponen_id')->where('berkas_id', $berkasId);
     }
 }

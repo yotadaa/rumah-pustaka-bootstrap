@@ -96,7 +96,7 @@ class Berkas extends Component
         }
 
         $this->confirmingDelete->delete();
-        $this->dispatch('show-toast', message: ['mode' => 'error', 'message' => "Berkas berhasil dihapus."]);
+        $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Berkas berhasil dihapus."]);
         $this->confirmingDelete = null;
     }
 

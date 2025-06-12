@@ -1,0 +1,12 @@
+// STEP 1: Override Bootstrap color variables
+$primary: #6610f2;
+$secondary: #6c757d;
+$success: #00b894;
+$info: #00cec9;
+$warning: #fdcb6e;
+$danger: #d63031;
+$light: #f8f9fa;
+$dark: #212529;
+
+// STEP 2: Import Bootstrap after the overrides
+// @import "node_modules/bootstrap/scss/bootstrap";

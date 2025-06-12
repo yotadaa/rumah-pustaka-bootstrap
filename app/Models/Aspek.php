@@ -25,5 +25,10 @@ class Aspek extends Model
         return $this->belongsTo(Komponen::class, 'komponen_id');
     }
 
+    public function indikator()
+    {
+        return $this->hasMany(Indikator::class, 'aspek_id', 'id');
+    }
+
 
 }

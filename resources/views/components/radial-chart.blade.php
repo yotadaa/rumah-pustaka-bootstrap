@@ -1,28 +1,35 @@
-@props(['data'])
+@props(['data', 'id'])
 
-<div class="d-flex flex-column align-items-center" wire:ignore>
+@php
+    // If no ID is passed, generate a unique one.
+    $chartId = $id ?? 'chart-' . str()->random(8);
+@endphp
 
+<div class="col" wire:ignore>
     <div class="">
-        <div id="circle-chart-container"></div>
+        <div id="{{ $chartId }}"></div>
     </div>
 </div>
 
 @push('scripts')
     <script>
+        // We wrap this in a self-executing function to avoid polluting the global scope.
         (function() {
-            // Use the data passed from the component props, or a default value.
-            const chartData = {{ $data ?? 0 }};
+            // 1. Initial Data Setup
+            const initialData = {{ $data ?? 0 }};
+            const chartElementId = '#{{ $chartId }}';
 
+            // 2. Chart Options
             const chartOptions = {
-                series: [chartData],
+                series: [initialData],
                 chart: {
-                    height: 280,
+                    height: '100%',
                     type: 'radialBar',
                 },
                 plotOptions: {
                     radialBar: {
                         hollow: {
-                            size: '75%'
+                            size: '60%'
                         },
                         dataLabels: {
                             name: {
@@ -30,7 +37,7 @@
                             },
                             value: {
                                 show: true,
-                                fontSize: '2.5rem',
+                                fontSize: '2rem',
                                 fontWeight: 'bold',
                                 color: '#333',
                                 offsetY: 10,
@@ -41,19 +48,29 @@
                         }
                     }
                 },
-                // Labels for the chart series.
                 labels: ['Progress'],
-                // Colors for the progress bar
-                colors: ['#0d6efd'], // Using a Bootstrap primary blue
+                colors: ['#0d6efd'],
                 stroke: {
-                    lineCap: 'round' // Makes the ends of the progress bar rounded
+                    lineCap: 'round'
                 }
             };
 
-            // Create the chart instance
-            const chart = new ApexCharts(document.querySelector("#circle-chart-container"), chartOptions);
-            // Render the initial chart
+            // 3. Chart Initialization
+            const chart = new ApexCharts(document.querySelector(chartElementId), chartOptions);
             chart.render();
+
+            // 4. LIVEWIRE EVENT LISTENER
+            // Listen for an event dispatched from Livewire to update the chart.
+            // We use window.addEventListener for compatibility with Livewire 3.
+            window.addEventListener('update-chart-{{ $chartId }}', event => {
+                // The event detail contains the new data.
+                // Livewire 3 wraps details in an array, so we access event.detail[0]
+                const newData = event.detail[0].data;
+
+                // Use the ApexCharts API to update the series with the new data.
+                chart.updateSeries([newData]);
+            });
+
         })();
     </script>
 @endpush

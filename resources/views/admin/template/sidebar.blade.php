@@ -17,7 +17,7 @@
             'title' => 'Akreditasi',
             'list' => [
                 [
-                    'title' => 'Berkas',
+                    'title' => 'Akreditasi',
                     'icon' => 'fa fa-file-alt',
                     'rute' => route('admin.akreditasi.daftar'),
                     'type' => 'single',
@@ -30,7 +30,7 @@
             'title' => 'ISO',
             'list' => [
                 [
-                    'title' => 'Berkas',
+                    'title' => 'ISO',
                     'icon' => 'fa fa-file-alt',
                     'rute' => route('admin.iso.daftar'),
                     'type' => 'single',
@@ -71,7 +71,7 @@
 <aside class="left-sidebar " style="background-color: none;">
     <!-- Sidebar scroll-->
     <script>
-        const currentRoute = (window.location.pathname + window.location.search).split("/").slice(1,3).join("/");
+        const currentRoute = (window.location.pathname + window.location.search).split("/").slice(1, 3).join("/");
         console.log(currentRoute)
     </script>
     <div class="">
@@ -87,16 +87,17 @@
         <nav class="px-0 sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav" class="px-0 ps-2">
                 @foreach ($menuList as $index => $menu)
-                    <li class="nav-small-cap">
+                    {{-- <li class="nav-small-cap">
                         <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                         <span class="hide-menu">{{ $menu['title'] }}</span>
-                    </li>
+                    </li> --}}
                     @foreach ($menu['list'] as $submenu)
                         @if ($submenu['type'] == 'single')
-                            <li class="sidebar-item rounded-0 w-100" style="">
+                            <li class="sidebar-item rounded-0 w-100 my-3" style="">
                                 <a id="menu-{{ $index }}"
                                     class="py-1 sidebar-link rounded-0 rounded-start-pill align-items-center"
-                                    href="{{ $submenu['rute'] }}" aria-expanded="false" data-link = "{{$submenu['routeList']}}">
+                                    href="{{ $submenu['rute'] }}" aria-expanded="false"
+                                    data-link = "{{ $submenu['routeList'] }}">
                                     @if ($submenu['iconType'] == 'img')
                                         <img src="{{ $submenu['icon'] }}"></img>
                                     @elseif ($submenu['iconType'] == 'fa')
@@ -106,12 +107,11 @@
                                 </a>
                             </li>
                             <script>
-                                var itemMenu = document.getElementById('menu-{{$index}}');
+                                var itemMenu = document.getElementById('menu-{{ $index }}');
                                 var link = itemMenu.getAttribute('data-link');
                                 if (currentRoute == link) {
                                     itemMenu.classList.add('active');
                                 }
-
                             </script>
                         @endif
                     @endforeach

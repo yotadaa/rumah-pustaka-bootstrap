@@ -36,7 +36,7 @@
                         {!! $ind->content !!}
                     </div>
                     <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2">
-                        @foreach ($indikator_option->where('indikator_id', $ind->id) as $opsi)
+                        @foreach ($indikator_option->where('indikator_id', $ind->id)->sortBy('option') as $opsi)
                             <label
                                 class="p-2 rounded-2 border-dark border-1 shadow btn btn-light text-start position-relative d-flex align-items-center gap-2">
                                 <input type="radio" name="jawaban_opsi_{{ $ind->id }}" value="{{ $opsi->id }}"
@@ -78,9 +78,13 @@
                                 @if (in_array($ind->id, $jumlah_indikator_terjawab))
                                     <button wire:click='clear_option("{{ $ind->id }}")'
                                         class="col-12 mt-1 gap-2 btn d-flex align-items-center btn-warning border border-dark text-dark">
-                                        <i class="fas fa-trash"></i> Bersihkan jawaban
+                                        <i class="fas fa-refresh"></i> Bersihkan jawaban
                                     </button>
                                 @endif
+                                <button class="col-12 mt-1 gap-2 btn d-flex align-items-center btn-outline-dark"
+                                    wire:click="toggleShowDocument('{{ $ind->id }}')">
+                                    <i class="fas fa-file"></i> Lihat Dokumen
+                                </button>
                             </div>
                         @endif
                     </div>
@@ -121,6 +125,7 @@
                                 wire:click='toggleModal("delete-indikator", false, "delete-indikator", null, "{{ $ind->id }}")'>
                                 <i class="fas fa-trash"></i> Hapus indikator
                             </button>
+
                         </div>
                     @endif
                 </div>
@@ -134,7 +139,7 @@
 
                         <!-- Kolom 3 (1/4) -->
                         <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2 ">
-                            @foreach ($indikator_option->where('indikator_id', $sub_ind->id) as $opsi)
+                            @foreach ($indikator_option->where('indikator_id', $sub_ind->id)->sortBy('option') as $opsi)
                                 <label
                                     class="p-2 rounded-2 border-dark border-1 shadow btn btn-light text-start position-relative d-flex align-items-center gap-2">
                                     <input type="radio" name="jawaban_opsi_{{ $ind->id }}"
@@ -174,11 +179,15 @@
                                         <i class="fas fa-trash"></i> Hapus indikator
                                     </button>
                                     @if (in_array($sub_ind->id, $jumlah_indikator_terjawab))
-                                        <button wire:click='clear_option("{{ $sub_ind->id }}")'
+                                        <button wire:click='clear_option("{{ $sub_ind->id }}")' wire
                                             class="btn col-12 btn-warning border border-dark text-dark">
-                                            <i class="fas fa-trash"></i> Bersihkan jawaban
+                                            <i class="fas fa-refresh"></i> Bersihkan jawaban
                                         </button>
                                     @endif
+                                    <button class="col-12  gap-2 btn d-flex align-items-center btn-outline-dark"
+                                        wire:click="toggleShowDocument('{{ $sub_ind->id }}')">
+                                        <i class="fas fa-file"></i> Lihat Dokumen
+                                    </button>
                                 @endif
                             </div>
                         </div>
