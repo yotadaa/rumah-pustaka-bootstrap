@@ -10,14 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('files', function (Blueprint $table) {
-            if (!Schema::hasColumn('files', 'score')) {
-                $table->integer('score')->default(0);
-            }
-            if (!Schema::hasColumn('files', 'indikator_id')) {
-                $table->uuid('indikator_id')->nullable();
-            }
-        });
+        // Schema::table('files', function (Blueprint $table) {
+        //     if (!Schema::hasColumn('files', 'score')) {
+        //         $table->integer('score')->default(0);
+        //     }
+        //     if (!Schema::hasColumn('files', 'indikator_id')) {
+        //         $table->uuid('indikator_id')->nullable();
+        //     }
+        // });
     }
     /**
      * Reverse the migrations.

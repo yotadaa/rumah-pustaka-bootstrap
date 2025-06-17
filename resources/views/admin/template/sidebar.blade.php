@@ -43,7 +43,7 @@
             'title' => 'Arsip',
             'list' => [
                 [
-                    'title' => 'Dashboard',
+                    'title' => 'Arsip',
                     'icon' => 'fa   fa-archive',
                     'rute' => '#',
                     'type' => 'single',

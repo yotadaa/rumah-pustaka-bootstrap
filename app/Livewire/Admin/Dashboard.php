@@ -17,6 +17,8 @@ class Dashboard extends Component
     public $grouped_scores;
     public $berkas_id = null, $berkas_label = "";
 
+    public $total_progress = 0;
+
     public $berkas;
     public function mount()
     {
@@ -90,6 +92,13 @@ class Dashboard extends Component
         });
 
         // dd($this->all_scores / 2);
+
+        $this->grouped_scores->each(function ($o) {
+            $this->total_progress += ($o['skor'] / $o['maksimum_skor'] * $o['indikator']) / $o['maksimum_skor'];
+        });
+
+        $this->total_progress /= \App\Models\Komponen::where('model', 'akreditasi')->count();
+        $this->total_progress = round($this->total_progress * 100, 2);
     }
 
 

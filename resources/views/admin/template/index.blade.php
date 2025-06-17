@@ -105,6 +105,7 @@
         style="overflow-x: auto; padding: 0 10%;z-index: 999; background-color: rgba(0,0,0,.2)">
         <img class="cursor-pointer position-fixed" onclick="closeModal()" src="" width="50"
             style="top: 20px; right: 20px;filter: drop-shadow(0px 0px 10px black) max-height: 500px;" />
+
     </div>
 
 
@@ -115,6 +116,7 @@
         @include('admin.template.sidebar')
         <!--  Main wrapper -->
         <div class="body-wrapper " style="background-color: rgba(245, 246, 250, 1); min-height: 100vh;">
+            tes
             <!--  Header Start -->
             <!-- ================================================ -->
             @include('admin.template.navbar')

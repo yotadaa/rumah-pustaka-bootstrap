@@ -1,3 +1,138 @@
+@push('styles')
+    <style>
+        /* Custom Styles */
+        body {
+            background-color: #f8f9fa;
+            /* A light grey background */
+        }
+
+        .main-header {
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .stat-card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .stat-card .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-card-icon {
+            font-size: 2rem;
+            color: #0d6efd;
+            /* Bootstrap primary blue */
+        }
+
+        .stat-card-info h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .stat-card-info p {
+            font-size: 0.9rem;
+            color: #6c757d;
+            /* Bootstrap secondary text color */
+            margin-bottom: 0;
+        }
+
+        .stat-card-growth {
+            color: #198754;
+            /* Bootstrap success green */
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    </style>
+
+    <style>
+        .stat-card {
+            border: none;
+            /* Menghapus border default */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            /* Efek sedikit terangkat saat hover */
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        .stat-card .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Mengatur agar semua teks dan ikon di dalam kartu gradient menjadi putih */
+        .gradient-card .stat-card-icon,
+        .gradient-card .stat-card-info h3,
+        .gradient-card .stat-card-info p {
+            color: #ffffff;
+        }
+
+        /* Ukuran ikon dan teks */
+        .stat-card-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-info p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
+
+        /* == GRADIENT CLASSES == */
+        /* Gradient 1: Biru ke Ungu */
+        .gradient-1 {
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Gradient 2: Hijau ke Biru */
+        .gradient-2 {
+            background-image: linear-gradient(135deg, #2AF598 0%, #009EFD 100%);
+        }
+
+        /* Gradient 3: Kuning ke Oranye */
+        .gradient-3 {
+            background-image: linear-gradient(135deg, #F6D365 0%, #FDA085 100%);
+        }
+
+        /* Gradient 4: Pink ke Oranye */
+        .gradient-4 {
+            background-image: linear-gradient(135deg, #FE6B8B 0%, #FF8E53 100%);
+        }
+
+        .progress-bar-gradient {
+            /* Menghapus warna background default agar gradient terlihat */
+            background-color: transparent;
+
+            /* Membuat gradient dari kiri (biru) ke kanan (hijau) */
+            background-image: linear-gradient(to right, #2096ff, #05ffa3);
+
+            /* Menambahkan sedikit bayangan agar terlihat lebih menonjol */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+@endpush
+
 <div>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-2" style="flex-wrap: wrap; overflow-x: auto;">
@@ -24,7 +159,7 @@
                 </ul>
             </div>
 
-            <div class="row col-12">
+            {{-- <div class="row col-12">
                 <div class="col-12  col-sm-2 h-100">
                     <div class="rounded-2 h-100 shadow text-center border-1 "
                         style="background: radial-gradient(circle, rgba(242,247,255,1), #B2CBDF);">
@@ -109,43 +244,146 @@
 
                 </div>
 
-            </div>
-            <div class="p-3">
-                <h3>Summary Komponen</h3>
-                @foreach ($grouped_scores->sortBy('name') as $gr)
-                    <div
-                        class="p-2 col-6 btn btn-light flex-wrap text-start border shadow border-dark rounded mb-2 d-flex justify-content-between align-items-center">
-                        <div class="flex-grow-1 me-3">
-                            <div>{{ $gr['name'] }}
-                                <a href="{{ route('admin.akreditasi.aspek', ['berkas_id' => $berkas_id, 'komponen_id' => $gr['id']]) }}"
-                                    target="_blank">
-                                    <i class="fas fa-up-right-from-square"></i>
-                                </a>
-                            </div>
-                            <div class="progress mt-1 shadow border border-dark" style="height: 10px; width: 100%;">
-                                <div class="shadow progress-bar  bg-primary" role="progressbar"
-                                    style="width: {{ $gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100 }}%;"
-                                    aria-valuenow="{{ 90 }}" aria-valuemin="0" aria-valuemax="100">
+            </div> --}}
+
+            <div class="container-fluid">
+
+                <main class="p-4">
+                    <div class="row g-4">
+
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card stat-card shadow gradient-card gradient-1">
+                                <div class="card-body">
+                                    <div class="stat-card-icon">
+                                        <i class="bi bi-graph-up-arrow"></i>
+                                    </div>
+                                    <div class="stat-card-info text-end">
+                                        <h3>{{ $total_progress }}%</h3>
+                                        <p>Total Progress</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="btn-group mt-2 ">
-                            <button style="min-width:80px;" class="btn btn-outline-dark">
-                                {{-- {{ round($gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100, 2) }}% --}}
-                                {{ round($gr['indikator'] == 0 ? 0 : $gr['skor'] / $gr['indikator'], 1) }}
-                            </button>
-                            <button style="min-width:100px;"
-                                class="btn btn-outline-dark">{{ $gr['skor'] }}/{{ $gr['maksimum_skor'] * $gr['indikator'] }}</button>
-                            <button style="min-width:80px;" class="btn btn-outline-dark" data-bs-toggle="tooltip"
-                                title="Lihat Indikator Belum Terjawab">
-                                {{ $gr['filled'] }} / {{ $gr['indikator'] }}
-                            </button>
 
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card stat-card shadow gradient-card gradient-2">
+                                <div class="card-body">
+                                    <div class="stat-card-icon">
+                                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                                    </div>
+                                    <div class="stat-card-info text-end">
+                                        <h3>{{ \App\Models\Komponen::where('model', 'akreditasi')->count() }} Komponen
+                                        </h3>
+                                        <p>Total Komponen</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                @endforeach
 
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card stat-card shadow gradient-card gradient-3">
+                                <div class="card-body">
+                                    <div class="stat-card-icon">
+                                        <i class="bi bi-columns-gap"></i>
+                                    </div>
+                                    <div class="stat-card-info text-end">
+                                        <h3>{{ \App\Models\Aspek::all()->count() }} Aspek</h3>
+                                        <p style="font-weight: 600;">{{ \App\Models\SubAspek::all()->count() }}
+                                            Sub-Aspek</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card stat-card shadow gradient-card gradient-4">
+                                <div class="card-body">
+                                    <div class="stat-card-icon">
+                                        <i class="bi bi-card-checklist"></i>
+                                    </div>
+                                    <div class="stat-card-info text-end">
+                                        <h3 class="" style="font-weight: 900;">
+                                            {{ \App\Models\Indikator::all()->count() }} Indikator</h3>
+                                        <p class="fw-bold"><strong>{{ $grouped_scores->sum('filled') }}</strong> Terisi
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
             </div>
+
+            <div class="p-3">
+                <h3>Summary Komponen</h3>
+
+                <div class="row g-3">
+                    @foreach ($grouped_scores->sortBy('name') as $gr)
+                        <div class="col-12 col-xl-6">
+
+                            <div
+                                class="p-3 border border-success shadow stat-card rounded bg-white d-block d-md-flex justify-content-between align-items-md-center w-100">
+
+                                <div class="flex-grow-1 me-md-3">
+                                    <div class="fw-bold">
+                                        {{ $gr['name'] }}
+                                        <a href="{{ route('admin.akreditasi.aspek', ['berkas_id' => $berkas_id, 'komponen_id' => $gr['id']]) }}"
+                                            target="_blank" class="ms-1 text-primary">
+                                            <i class="fas fa-up-right-from-square fa-xs"></i>
+                                        </a>
+                                    </div>
+                                    <div class="progress mt-1" style="height: 10px;">
+                                        <div class="progress-bar progress-bar-gradient" role="progressbar"
+                                            style="width: {{ $gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100 }}%;"
+                                            aria-valuenow="{{ $gr['skor'] }}" aria-valuemin="0"
+                                            aria-valuemax="{{ $gr['maksimum_skor'] * $gr['indikator'] }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="btn-group mt-2 col-12 col-md-5 ">
+
+                                    <button style="min-width:80px;" class="btn btn-outline-dark"
+                                        data-bs-toggle="tooltip" title="Poin Komponen">
+
+                                        {{-- {{ round($gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100, 2) }}% --}}
+
+                                        {{ round($gr['indikator'] == 0 ? 0 : $gr['skor'] / $gr['indikator'], 1) }}
+
+                                    </button>
+
+                                    <button style="min-width:100px;" class="btn btn-outline-dark"
+                                        data-bs-toggle="tooltip"
+                                        title="Total Poin">{{ $gr['skor'] }}/{{ $gr['maksimum_skor'] * $gr['indikator'] }}</button>
+
+                                    <button style="min-width:80px;" class="btn btn-outline-dark"
+                                        data-bs-toggle="tooltip" title="Progress Indikator">
+
+                                        {{ $gr['filled'] }} / {{ $gr['indikator'] }}
+
+                                    </button>
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <script>
+                // Pastikan script ini dijalankan setelah DOM selesai dimuat
+                document.addEventListener("DOMContentLoaded", function() {
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                });
+            </script>
         </div>
 
     </div>
