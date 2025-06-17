@@ -68,11 +68,8 @@
                 </div>
                 @php
                     // Logika yang benar untuk MENGHITUNG Indikator unik yang terjawab
-                    $jumlah_indikator_terjawab = $indikator_option
-                        // 1. Filter koleksi OPSI berdasarkan aspek_id dari relasi indikator
-                        ->where('choosen', true)
+                    $jumlah_indikator_terjawab = $choosen_indikator
                         ->where('indikator.aspek_id', $aspek_id)
-
                         // 2. Ambil hanya objek INDIKATOR dari setiap opsi yang lolos filter
                         ->pluck('indikator')
 

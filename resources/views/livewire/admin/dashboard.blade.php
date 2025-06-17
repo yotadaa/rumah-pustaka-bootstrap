@@ -304,7 +304,7 @@
                                     <div class="stat-card-info text-end">
                                         <h3 class="" style="font-weight: 900;">
                                             {{ \App\Models\Indikator::all()->count() }} Indikator</h3>
-                                        <p class="fw-bold"><strong>{{ $grouped_scores->sum('filled') }}</strong> Terisi
+                                        <p class="fw-bold"><strong>{{ $choosen_indikator->count() }}</strong> Terisi
                                         </p>
                                     </div>
                                 </div>

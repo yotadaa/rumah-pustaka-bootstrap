@@ -37,14 +37,19 @@
                     </div>
                     <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2">
                         @foreach ($indikator_option->where('indikator_id', $ind->id)->sortBy('option') as $opsi)
+                            @php
+                                $choosen = \App\Models\ChoosenIndikator::where('indikator_id', $opsi->indikator_id)
+                                    ->where('berkas_id', $berkas_id)
+                                    ->first();
+                            @endphp
                             <label
                                 class="p-2 rounded-2 border-dark border-1 shadow btn btn-light text-start position-relative d-flex align-items-center gap-2">
                                 <input type="radio" name="jawaban_opsi_{{ $ind->id }}" value="{{ $opsi->id }}"
-                                    @if ($opsi->choosen) checked @endif
+                                    @if ($opsi->option == (!$choosen ? false : $choosen->option)) checked @endif
                                     style="outline: 0; transition: all ease-in-out 0.2s;"
-                                    class="form-check-input m-0 border-1 border-primary outline-0"
+                                    class="form-check-input m-0 border-1 border-primary outline-0 col-12"
                                     wire:click='setScore("{{ $opsi->id }}")' />
-                                <span>{{ $opsi->konten }}</span>
+                                <span>{{ $opsi->konten }} </span>
                             </label>
                         @endforeach
                     </div>
@@ -66,6 +71,12 @@
                             </div>
                         @endif
                         @if (auth()->user()->pangkat == 0)
+                            @php
+                                $option_exists = $choosen_indikator
+                                    ->where('indikator_id', $ind->id)
+                                    ->where('berkas_id', $berkas_id)
+                                    ->first();
+                            @endphp
                             <div class="col-12">
                                 <button class="col-12 mt-1 gap-2 btn d-flex align-items-center btn-info"
                                     wire:click='toggleModal("edit-indikator", false, "edit-indikator", null, "{{ $ind->id }}")'>
@@ -75,7 +86,7 @@
                                     wire:click='toggleModal("delete-indikator", false, "delete-indikator", null, "{{ $ind->id }}")'>
                                     <i class="fas fa-trash"></i> Hapus indikator
                                 </button>
-                                @if (in_array($ind->id, $jumlah_indikator_terjawab))
+                                @if ($option_exists)
                                     <button wire:click='clear_option("{{ $ind->id }}")'
                                         class="col-12 mt-1 gap-2 btn d-flex align-items-center btn-warning border border-dark text-dark">
                                         <i class="fas fa-refresh"></i> Bersihkan jawaban
@@ -140,10 +151,16 @@
                         <!-- Kolom 3 (1/4) -->
                         <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2 ">
                             @foreach ($indikator_option->where('indikator_id', $sub_ind->id)->sortBy('option') as $opsi)
+                                @php
+                                    $choosen = $choosen_indikator
+                                        ->where('indikator_id', $opsi->indikator_id)
+                                        ->where('berkas_id', $berkas_id)
+                                        ->first();
+                                @endphp
                                 <label
                                     class="p-2 rounded-2 border-dark border-1 shadow btn btn-light text-start position-relative d-flex align-items-center gap-2">
                                     <input type="radio" name="jawaban_opsi_{{ $ind->id }}"
-                                        value="{{ $opsi->id }}" @if ($opsi->choosen) checked @endif
+                                        value="{{ $opsi->id }}" @if (($choosen->option ?? false) == $opsi->option) checked @endif
                                         style="outline: 0; transition: all ease-in-out 0.2s;"
                                         class="form-check-input m-0 border-1 border-primary outline-0"
                                         wire:click='setScore("{{ $opsi->id }}")' />
@@ -178,7 +195,13 @@
                                         wire:click='toggleModal("delete-indikator", false, "delete-indikator", null, "{{ $ind->id }}")'>
                                         <i class="fas fa-trash"></i> Hapus indikator
                                     </button>
-                                    @if (in_array($sub_ind->id, $jumlah_indikator_terjawab))
+                                    @php
+                                        $option_exists = $choosen_indikator
+                                            ->where('indikator_id', $ind->sub_id)
+                                            ->where('berkas_id', $berkas_id)
+                                            ->first();
+                                    @endphp
+                                    @if ($option_exists)
                                         <button wire:click='clear_option("{{ $sub_ind->id }}")' wire
                                             class="btn col-12 btn-warning border border-dark text-dark">
                                             <i class="fas fa-refresh"></i> Bersihkan jawaban

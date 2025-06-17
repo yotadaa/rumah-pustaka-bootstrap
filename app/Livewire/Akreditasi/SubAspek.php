@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\Aspek as AspekModel;
 use App\Models\SubAspek as SubAspekModel;
 use App\Models\Indikator;
+use App\Models\ChoosenIndikator;
 use App\Models\OpsiIndikator;
 use Illuminate\Support\Facades\Log;
 
@@ -19,6 +20,7 @@ class SubAspek extends Component
     public $document_id;
 
     public $is_processing = false;
+    public $choosen_indikator;
 
     public $indikator_id, $aspek_id, $komponen_id, $berkas_id, $aspek, $all_aspek;
     public $showForm = false;
@@ -89,19 +91,75 @@ class SubAspek extends Component
         // For example:
         // $this->emit('aspekSelected', $this->selectedAspekId);
     }
+    public function setScore($id)
+    {
+        $option = OpsiIndikator::findOrFail($id);
+        $mapping = [
+            'a' => 5,
+            'b' => 4,
+            'c' => 3,
+            'd' => 2,
+            'e' => 1,
+        ];
 
+        $nilai = strtolower($option->option); // pastikan lowercase
+        $angka = $mapping[$nilai] ?? null; // null jika tidak cocok
+        $indikator = $option->indikator; // relasi indikator di model OpsiIndikator
+
+        $all_options = OpsiIndikator::where('indikator_id', $indikator->id)->get()
+            ->each(function ($opsi) use ($id) {
+                if ($opsi->id != $id) {
+                    $opsi->score = 0;
+                    $opsi->choosen = false;
+                    $opsi->save();
+
+                }
+
+            });
+
+
+        // Ambil aspek dari indikator
+        $aspek = $indikator ? $indikator->aspek : null; // relasi aspek di model Indikator
+
+        // Ambil komponen dari aspek
+        $komponen = $aspek ? $aspek->komponen : null; // relasi komponen di model Aspek
+        $score = ($komponen->skor / 5) * $angka;
+        // dd($angka);
+        $option->score = $score;
+        $option->choosen = true;
+        // $option->save();
+        $check_option = ChoosenIndikator::where('indikator_id', $option->indikator_id)->where('berkas_id', $this->berkas_id)->first();
+        if (!$check_option) {
+            // dd("ga ada");
+            ChoosenIndikator::create([
+                "id" => Str::uuid(),
+                "indikator_id" => $indikator->id,
+                "komponen_id" => $komponen->id,
+                "score" => $score,
+                "berkas_id" => $this->berkas_id,
+                "option" => $option->option
+            ]);
+        } else {
+            $check_option->update([
+                "score" => $score,
+                "option" => $option->option
+            ]);
+            $check_option->save();
+        }
+        $this->update_score();
+    }
 
     public function update_score()
     {
-        $get_score = OpsiIndikator::where('choosen', true)->get();
+        $get_score = ChoosenIndikator::where([
+            'berkas_id' => $this->berkas_id,
+        ])->get();
         $get_score = $get_score->filter(function ($opsi) {
             return $opsi->indikator->aspek_id == $this->aspek_id;
         });
-        // dd($get_score->sum('score'));
         if (count($get_score) != 0) {
             $this->total_skor = $get_score->sum('score') / $this->indikator->where('multiple', false)->count();
         }
-        // dd($this->indikator->where('multiple', false)->count());
 
 
         $this->dispatch('update-chart-totalScoreChart', ['data' => round(($this->total_skor / \App\Models\Komponen::findOrFail($this->komponen_id)->skor) * 100, 2)]);
@@ -226,12 +284,17 @@ class SubAspek extends Component
 
     public function clear_option($id)
     {
-        $this->indikator_option->where('indikator_id', $id)
-            ->each(function ($e) {
-                $e->choosen = false;
-                $e->score = 0;
-                $e->save();
-            });
+        // $this->indikator_option->where('indikator_id', $id)
+        //     ->each(function ($e) {
+        //         $e->choosen = false;
+        //         $e->score = 0;
+        //         $e->save();
+        //     });
+        $getted = $this->choosen_indikator->where('indikator_id', $id)
+            ->where('berkas_id', $this->berkas_id)->first();
+        if ($getted) {
+            $getted->delete();
+        }
         $this->update_score();
         $this->dispatch('show-toast', message: ['mode' => 'info', 'message' => "Pilihan berhasil dibersihkan."]);
 
@@ -425,6 +488,7 @@ class SubAspek extends Component
             ->orderBy('no')
             ->get();
         $this->indikator_option = OpsiIndikator::all();
+        $this->choosen_indikator = ChoosenIndikator::all();
         $this->update_score();
         return view('livewire.akreditasi.sub-aspek');
     }
@@ -658,47 +722,6 @@ class SubAspek extends Component
         $this->toggleModal('tambah-indikator', true);
     }
 
-    public function setScore($id)
-    {
 
-        // dd($id);
-        $option = OpsiIndikator::findOrFail($id);
-        $mapping = [
-            'a' => 5,
-            'b' => 4,
-            'c' => 3,
-            'd' => 2,
-            'e' => 1,
-        ];
-
-        $nilai = strtolower($option->option); // pastikan lowercase
-        $angka = $mapping[$nilai] ?? null; // null jika tidak cocok
-        $indikator = $option->indikator; // relasi indikator di model OpsiIndikator
-
-        $all_options = OpsiIndikator::where('indikator_id', $indikator->id)->get()
-            ->each(function ($opsi) use ($id) {
-                if ($opsi->id != $id) {
-                    $opsi->score = 0;
-                    $opsi->choosen = false;
-                    $opsi->save();
-
-                }
-
-            });
-
-
-        // Ambil aspek dari indikator
-        $aspek = $indikator ? $indikator->aspek : null; // relasi aspek di model Indikator
-
-        // Ambil komponen dari aspek
-        $komponen = $aspek ? $aspek->komponen : null; // relasi komponen di model Aspek
-        $score = ($komponen->skor / 5) * $angka;
-        // dd($angka);
-        $option->score = $score;
-        $option->choosen = true;
-        $option->save();
-        $this->update_score();
-
-    }
 
 }

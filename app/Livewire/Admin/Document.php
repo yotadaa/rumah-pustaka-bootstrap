@@ -15,6 +15,7 @@ class Document extends Component
         "id" => null,
     ];
 
+    public $is_processing = false;
     public $file = null;
     public $all_document;
     public function mount($document_id)
@@ -26,32 +27,51 @@ class Document extends Component
 
         $this->all_document = File::where('indikator_id', $document_id)->get();
         // dd($document_id);
+    }
 
+    public function delete_file($id)
+    {
+        try {
+            $file = File::findOrFail($id);
+            $helper = new uploadFileController();
+            $helper->delete($file->path);
+            $file->delete();
+        } catch (\Exception $e) {
+            $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "File tidak ditemukan"]);
+
+        }
     }
 
     public function updatedFile()
     {
+        $this->is_processing = true;
         $this->validate([
             'file' => 'required|file|max:10240', // Max 10MB
         ]);
+        try {
+            $helper = new uploadFileController();
+            $path = $helper->create("dokumen", $this->file);
 
-        $helper = new uploadFileController();
-        $path = $helper->create("dokumen", $this->file);
+            // dd($path);
+            File::create([
+                'path' => $path,
+                'folder' => "-",
+                'filename' => $this->file->getClientOriginalName()
+                ,
+                'komponen_id' => "-",
+                'berkas_id' => "-",
+                'role_id' => -1,
+                'indikator_id' => $this->document['id'],
+                'score' => 1,
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Terjadi error: " . $e->getMessage()]);
+        } finally {
+            $this->dispatch('show-toast', message: ['mode' => 'info', 'message' => "File berhasil diupload"]);
+            $this->file = null;
+            $this->is_processing = false;
+        }
 
-        // dd($path);
-        File::create([
-            'path' => $path,
-            'folder' => "-",
-            'filename' => $this->file->getClientOriginalName()
-            ,
-            'komponen_id' => "-",
-            'berkas_id' => "-",
-            'role_id' => -1,
-            'indikator_id' => $this->document['id'],
-            'score' => 1,
-        ]);
-
-        $this->dispatch('show-toast', message: ['mode' => 'info', 'message' => "File berhasil diupload"]);
     }
 
 

@@ -116,7 +116,6 @@
         @include('admin.template.sidebar')
         <!--  Main wrapper -->
         <div class="body-wrapper " style="background-color: rgba(245, 246, 250, 1); min-height: 100vh;">
-            tes
             <!--  Header Start -->
             <!-- ================================================ -->
             @include('admin.template.navbar')
