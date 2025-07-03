@@ -92,13 +92,14 @@ class Dashboard extends Component
         }
         // dd($groupedByKomponen);
         // dd($this->grouped_scores);
-        $this->grouped_scores->each(function ($o) {
-            if ($o['indikator'] != 0)
-                $this->all_scores += $o['skor'] / $o['indikator'];
-            else
-                $this->all_scores += 0;
-        });
-
+        if ($this->grouped_scores != null) {
+            $this->grouped_scores->each(function ($o) {
+                if ($o['indikator'] != 0)
+                    $this->all_scores += $o['skor'] / $o['indikator'];
+                else
+                    $this->all_scores += 0;
+            });
+        }
         // dd($this->all_scores / 2);
 
         $this->total_progress = $this->choosen_indikator->count() / Indikator::all()->count();
@@ -166,25 +167,36 @@ class Dashboard extends Component
         // dd($groupedByKomponen);
         // dd($this->grouped_scores);
         // dd($this->grouped_scores);
-        $this->grouped_scores->each(function ($o) {
-            if ($o['indikator'] != 0)
-                $this->all_scores += $o['skor'] / $o['indikator'];
-            else
-                $this->all_scores += 0;
-        });
-
+        if ($this->grouped_scores != null) {
+            $this->grouped_scores->each(function ($o) {
+                if ($o['indikator'] != 0)
+                    $this->all_scores += $o['skor'] / $o['indikator'];
+                else
+                    $this->all_scores += 0;
+            });
+        }
     }
 
     public function changeBerkas($id)
     {
         // dd($id);    
-        $this->total_progress = 0;
-        $this->berkas_id = $id;
-        $this->berkas_label = $this->berkas->where('id', $id)->first()->name;
-        $this->updateVariabel();
-        $this->total_progress = $this->choosen_indikator->count() / Indikator::all()->count();
+        $this->dispatch('show-loading', loading: true);
+        try {
+            $this->total_progress = 0;
+            $this->berkas_id = $id;
+            $this->berkas_label = $this->berkas->where('id', $id)->first()->name;
+            $this->updateVariabel();
+            $this->total_progress = $this->choosen_indikator->count() / Indikator::all()->count();
 
-        $this->total_progress = round($this->total_progress * 100, 2);
+            $this->total_progress = round($this->total_progress * 100, 2);
+            $this->dispatch('show-loading', loading: false);
+        } catch (\Exception $e) {
+            $this->dispatch('show-loading', loading: false);
+            $this->dispatch('show-toast', message: ['mode' => 'danger', 'message' => "Terjadi error: " . $e->getMessage()]);
+        } finally {
+            $this->dispatch('show-toast', message: ['mode' => 'success', 'message' => "Berhasil!"]);
+            $this->dispatch('show-loading', loading: false);
+        }
     }
 
 
@@ -249,13 +261,14 @@ class Dashboard extends Component
             $this->grouped_scores = $groupedByKomponen->values()->merge($otherMapped);
         }
         // dd($this->grouped_scores);
-        $this->grouped_scores->each(function ($o) {
-            if ($o['indikator'] != 0)
-                $this->all_scores += $o['skor'] / $o['indikator'];
-            else
-                $this->all_scores += 0;
-        });
-
+        if ($this->grouped_scores != null) {
+            $this->grouped_scores->each(function ($o) {
+                if ($o['indikator'] != 0)
+                    $this->all_scores += $o['skor'] / $o['indikator'];
+                else
+                    $this->all_scores += 0;
+            });
+        }
         return view('livewire.admin.dashboard');
     }
 }

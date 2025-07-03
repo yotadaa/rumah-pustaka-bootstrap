@@ -1,6 +1,6 @@
 <div>
     @if ($document_id != null)
-        @livewire('admin.document', ['document_id' => $document_id])
+        @livewire('admin.document', ['document_id' => $document_id, 'berkas_id' => $berkas_id])
     @endif
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-2" style="flex-wrap: wrap; overflow-x: auto;">
@@ -22,7 +22,6 @@
             </li>
         </ol>
     </nav>
-
     <div class="border card">
 
         <div class="card-body">

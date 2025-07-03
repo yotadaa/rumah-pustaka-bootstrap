@@ -51,3 +51,6 @@ Route::get('/hash', function () {
     return bcrypt("Smartlibrary2024*");
 });
 
+Route::get('/test', function () {
+    return view('test');
+})->name('test');

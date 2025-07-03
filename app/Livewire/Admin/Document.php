@@ -18,14 +18,17 @@ class Document extends Component
     public $is_processing = false;
     public $file = null;
     public $all_document;
-    public function mount($document_id)
+    public $berkas_id;
+    public function mount($document_id, $berkas_id)
     {
+        $this->berkas_id = $berkas_id;
         $this->document = [
             ...$this->document,
             'id' => $document_id
         ];
 
-        $this->all_document = File::where('indikator_id', $document_id)->get();
+        // dd($berkas_id);
+        $this->all_document = File::where('indikator_id', $document_id)->where('berkas_id', $berkas_id)->get();
         // dd($document_id);
     }
 
@@ -59,7 +62,7 @@ class Document extends Component
                 'filename' => $this->file->getClientOriginalName()
                 ,
                 'komponen_id' => "-",
-                'berkas_id' => "-",
+                'berkas_id' => $this->berkas_id,
                 'role_id' => -1,
                 'indikator_id' => $this->document['id'],
                 'score' => 1,
@@ -78,6 +81,8 @@ class Document extends Component
     public function render()
     {
         $this->all_document = File::where('indikator_id', $this->document['id'])->get();
+        $this->all_document = File::where('indikator_id', $this->document['id'])->where('berkas_id', $this->berkas_id)->get();
+
         return view('livewire.admin.document');
     }
 

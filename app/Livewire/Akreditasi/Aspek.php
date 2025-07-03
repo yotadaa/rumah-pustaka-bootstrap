@@ -238,7 +238,7 @@ class Aspek extends Component
         $opsi_indikator = OpsiIndikator::whereIn('indikator_id', $all_indikator)->where('choosen', true)->get();
         $this->indikator = Indikator::where('multiple', 0)->whereIn('aspek_id', $all_aspek)->get();
         $num_indicator = Indikator::where('multiple', 0)->whereIn('aspek_id', $all_aspek)->count();
-        $this->total_score = $opsi_indikator->sum('score') / $num_indicator;
+        $this->total_score = $num_indicator == 0 ? 0 : $opsi_indikator->sum('score') / $num_indicator;
 
         // check first if App/Models/Berkas with berkas_id and App/Models/Komponen with komponen_id is exists, if not go to route('admin.akreditasi')
         $this->aspek = AspekModel::where(

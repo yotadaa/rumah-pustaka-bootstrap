@@ -38,7 +38,8 @@
                     <div class="col-12 col-md-3 d-flex flex-column gap-1 py-2">
                         @foreach ($indikator_option->where('indikator_id', $ind->id)->sortBy('option') as $opsi)
                             @php
-                                $choosen = \App\Models\ChoosenIndikator::where('indikator_id', $opsi->indikator_id)
+                                $choosen = $choosen_indikator
+                                    ->where('indikator_id', $opsi->indikator_id)
                                     ->where('berkas_id', $berkas_id)
                                     ->first();
                             @endphp

@@ -132,7 +132,7 @@
         </div>
     </div>
     <!-- Include ApexCharts via CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="{{ asset('js/apexcharts.min.js') }}"></script>
 
     <!-- This will render the scripts pushed from our component's view -->
     @stack('scripts')

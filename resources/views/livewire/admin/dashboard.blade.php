@@ -319,59 +319,61 @@
                 <h3>Summary Komponen</h3>
 
                 <div class="row g-3">
-                    @foreach ($grouped_scores->sortBy('name') as $gr)
-                        <div class="col-12 col-xl-6">
+                    @if ($grouped_scores != null)
+                        @foreach ($grouped_scores->sortBy('name') as $gr)
+                            <div class="col-12 col-xl-6">
 
-                            <div
-                                class="p-3 border border-success shadow stat-card rounded bg-white d-block d-md-flex justify-content-between align-items-md-center w-100">
+                                <div
+                                    class="p-3 border border-success shadow stat-card rounded bg-white d-block d-md-flex justify-content-between align-items-md-center w-100">
 
-                                <div class="flex-grow-1 me-md-3">
-                                    <div class="fw-bold">
-                                        {{ $gr['name'] }}
-                                        <a href="{{ route('admin.akreditasi.aspek', ['berkas_id' => $berkas_id, 'komponen_id' => $gr['id']]) }}"
-                                            target="_blank" class="ms-1 text-primary">
-                                            <i class="fas fa-up-right-from-square fa-xs"></i>
-                                        </a>
-                                    </div>
-                                    <div class="progress mt-1" style="height: 10px;">
-                                        <div class="progress-bar progress-bar-gradient" role="progressbar"
-                                            style="width: {{ $gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100 }}%;"
-                                            aria-valuenow="{{ $gr['skor'] }}" aria-valuemin="0"
-                                            aria-valuemax="{{ $gr['maksimum_skor'] * $gr['indikator'] }}">
+                                    <div class="flex-grow-1 me-md-3">
+                                        <div class="fw-bold">
+                                            {{ $gr['name'] }}
+                                            <a href="{{ route('admin.akreditasi.aspek', ['berkas_id' => $berkas_id, 'komponen_id' => $gr['id']]) }}"
+                                                target="_blank" class="ms-1 text-primary">
+                                                <i class="fas fa-up-right-from-square fa-xs"></i>
+                                            </a>
                                         </div>
+                                        <div class="progress mt-1" style="height: 10px;">
+                                            <div class="progress-bar progress-bar-gradient" role="progressbar"
+                                                style="width: {{ $gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100 }}%;"
+                                                aria-valuenow="{{ $gr['skor'] }}" aria-valuemin="0"
+                                                aria-valuemax="{{ $gr['maksimum_skor'] * $gr['indikator'] }}">
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="btn-group mt-2 col-12 col-md-5 ">
+
+                                        <button style="min-width:80px;" class="btn btn-outline-dark"
+                                            data-bs-toggle="tooltip" title="Poin Komponen">
+
+                                            {{-- {{ round($gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100, 2) }}% --}}
+
+                                            {{ round($gr['indikator'] == 0 ? 0 : $gr['skor'] / $gr['indikator'], 1) }}
+
+                                        </button>
+
+                                        <button style="min-width:100px;" class="btn btn-outline-dark"
+                                            data-bs-toggle="tooltip"
+                                            title="Total Poin">{{ $gr['skor'] }}/{{ $gr['maksimum_skor'] * $gr['indikator'] }}</button>
+
+                                        <button style="min-width:80px;" class="btn btn-outline-dark"
+                                            data-bs-toggle="tooltip" title="Progress Indikator">
+
+                                            {{ $gr['filled'] }} / {{ $gr['indikator'] }}
+
+                                        </button>
+
+
+
                                     </div>
 
                                 </div>
-
-                                <div class="btn-group mt-2 col-12 col-md-5 ">
-
-                                    <button style="min-width:80px;" class="btn btn-outline-dark"
-                                        data-bs-toggle="tooltip" title="Poin Komponen">
-
-                                        {{-- {{ round($gr['maksimum_skor'] * $gr['indikator'] == 0 ? 0 : ($gr['skor'] / ($gr['maksimum_skor'] * $gr['indikator'])) * 100, 2) }}% --}}
-
-                                        {{ round($gr['indikator'] == 0 ? 0 : $gr['skor'] / $gr['indikator'], 1) }}
-
-                                    </button>
-
-                                    <button style="min-width:100px;" class="btn btn-outline-dark"
-                                        data-bs-toggle="tooltip"
-                                        title="Total Poin">{{ $gr['skor'] }}/{{ $gr['maksimum_skor'] * $gr['indikator'] }}</button>
-
-                                    <button style="min-width:80px;" class="btn btn-outline-dark"
-                                        data-bs-toggle="tooltip" title="Progress Indikator">
-
-                                        {{ $gr['filled'] }} / {{ $gr['indikator'] }}
-
-                                    </button>
-
-
-
-                                </div>
-
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
                 </div>
             </div>
 

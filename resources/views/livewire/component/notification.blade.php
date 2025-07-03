@@ -16,8 +16,23 @@
         </div>
     @endif
 
+    // buatkan overlay loading memutar,
+    // parent fixed w-100 h-100 overflow-hidden
+    // buat dengan bootstrap
+
+
+    @if ($loading)
+        <div wire:loading
+            class="position-fixed w-100 h-100 top-0 start-0 d-flex justify-content-center align-items-center"
+            id="loadingOverlay" style="background-color: rgba(0, 0, 0, 0.5); z-index: 1060;">
+            <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    @endif
 
     <script>
+        // sesuaikan di sini degan livewire
         document.addEventListener('livewire:initialized', function() {
             // This listens for the event dispatched from the server
             Livewire.on('show-toast', (event) => {
@@ -36,6 +51,11 @@
                         });
                     }
                 }, 100);
+            });
+
+            // This listens for the event dispatched from the server
+            Livewire.on('show-loading', () => {
+                @this.set('loading', false);
             });
         });
     </script>
